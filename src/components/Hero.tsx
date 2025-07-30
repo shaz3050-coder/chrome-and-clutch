@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { ArrowRight, Play, Star, Users } from "lucide-react";
 import heroGarage from "@/assets/hero-garage.jpg";
@@ -30,13 +31,13 @@ const Hero = () => {
             <h1 className="heading-large mb-6 animate-fade-in">
               Son Vitesteki<br />
               <span className="text-primary animate-glow-pulse">Hikayeni</span><br />
-              Anlat
+              Burada Anlat
             </h1>
 
             {/* Subtitle */}
             <p className="text-xl md:text-2xl text-muted-foreground mb-8 max-w-2xl animate-fade-in">
-              Sanal garajını oluştur, modifiyelerini paylaş, araç tutkunlarıyla bağlan. 
-              Her aracın bir hikayesi var, seninkini dinleyelim.
+              Sanal garajını kur, modifiyeli arabanı sergile, tutkunu paylaştığın araç severlerle tanış. 
+              Her araba bir hikaye, seninkini dinleyelim.
             </p>
 
             {/* Stats */}
@@ -57,9 +58,11 @@ const Hero = () => {
 
             {/* CTA Buttons */}
             <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start animate-fade-in">
-              <Button size="lg" className="btn-primary group">
-                Garajını Oluştur
-                <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" />
+              <Button size="lg" className="btn-primary group" asChild>
+                <Link to="/register">
+                  Garajını Oluştur
+                  <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" />
+                </Link>
               </Button>
               <Button size="lg" variant="ghost" className="btn-ghost group">
                 <Play className="w-4 h-4 mr-2" />
