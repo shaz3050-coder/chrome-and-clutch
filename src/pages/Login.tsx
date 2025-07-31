@@ -1,14 +1,55 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Car, Eye, EyeOff } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
+import { useToast } from "@/hooks/use-toast";
 import heroGarage from "@/assets/hero-garage.jpg";
 
 const Login = () => {
   const [showPassword, setShowPassword] = useState(false);
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
+  const { toast } = useToast();
+
+  const handleLogin = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoading(true);
+
+    try {
+      const { error } = await supabase.auth.signInWithPassword({
+        email,
+        password,
+      });
+
+      if (error) {
+        toast({
+          variant: "destructive",
+          title: "Giriş Hatası",
+          description: error.message,
+        });
+      } else {
+        toast({
+          title: "Başarılı!",
+          description: "Giriş yapıldı, ana sayfaya yönlendiriliyorsunuz.",
+        });
+        navigate("/");
+      }
+    } catch (error) {
+      toast({
+        variant: "destructive",
+        title: "Hata",
+        description: "Bir hata oluştu. Lütfen tekrar deneyin.",
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <div className="min-h-screen flex items-center justify-center relative overflow-hidden">
@@ -44,7 +85,7 @@ const Login = () => {
           </CardHeader>
           
           <CardContent className="space-y-6">
-            <form className="space-y-4">
+            <form onSubmit={handleLogin} className="space-y-4">
               <div className="space-y-2">
                 <Label htmlFor="email">E-posta</Label>
                 <Input 
@@ -52,6 +93,9 @@ const Login = () => {
                   type="email" 
                   placeholder="ornek@email.com"
                   className="bg-background/50"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  required
                 />
               </div>
               
@@ -63,6 +107,9 @@ const Login = () => {
                     type={showPassword ? "text" : "password"}
                     placeholder="••••••••"
                     className="bg-background/50 pr-10"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    required
                   />
                   <button
                     type="button"
@@ -84,8 +131,8 @@ const Login = () => {
                 </Link>
               </div>
 
-              <Button className="w-full btn-primary" size="lg">
-                Giriş Yap
+              <Button type="submit" className="w-full btn-primary" size="lg" disabled={loading}>
+                {loading ? "Giriş yapılıyor..." : "Giriş Yap"}
               </Button>
             </form>
 

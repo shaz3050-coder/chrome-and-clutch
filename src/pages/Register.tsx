@@ -1,15 +1,74 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Car, Eye, EyeOff } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
+import { useToast } from "@/hooks/use-toast";
 import heroGarage from "@/assets/hero-garage.jpg";
 
 const Register = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [username, setUsername] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
+  const { toast } = useToast();
+
+  const handleRegister = async (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    if (password !== confirmPassword) {
+      toast({
+        variant: "destructive",
+        title: "Hata",
+        description: "Şifreler eşleşmiyor.",
+      });
+      return;
+    }
+
+    setLoading(true);
+
+    try {
+      const { error } = await supabase.auth.signUp({
+        email,
+        password,
+        options: {
+          emailRedirectTo: `${window.location.origin}/`,
+          data: {
+            username: username,
+          }
+        }
+      });
+
+      if (error) {
+        toast({
+          variant: "destructive",
+          title: "Kayıt Hatası",
+          description: error.message,
+        });
+      } else {
+        toast({
+          title: "Başarılı!",
+          description: "Kayıt olundu! Ana sayfaya yönlendiriliyorsunuz.",
+        });
+        navigate("/");
+      }
+    } catch (error) {
+      toast({
+        variant: "destructive",
+        title: "Hata",
+        description: "Bir hata oluştu. Lütfen tekrar deneyin.",
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <div className="min-h-screen flex items-center justify-center relative overflow-hidden">
@@ -45,7 +104,7 @@ const Register = () => {
           </CardHeader>
           
           <CardContent className="space-y-6">
-            <form className="space-y-4">
+            <form onSubmit={handleRegister} className="space-y-4">
               <div className="space-y-2">
                 <Label htmlFor="username">Kullanıcı Adı</Label>
                 <Input 
@@ -53,6 +112,9 @@ const Register = () => {
                   type="text" 
                   placeholder="kullanici_adi"
                   className="bg-background/50"
+                  value={username}
+                  onChange={(e) => setUsername(e.target.value)}
+                  required
                 />
               </div>
 
@@ -63,6 +125,9 @@ const Register = () => {
                   type="email" 
                   placeholder="ornek@email.com"
                   className="bg-background/50"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  required
                 />
               </div>
               
@@ -74,6 +139,9 @@ const Register = () => {
                     type={showPassword ? "text" : "password"}
                     placeholder="••••••••"
                     className="bg-background/50 pr-10"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    required
                   />
                   <button
                     type="button"
@@ -93,6 +161,9 @@ const Register = () => {
                     type={showConfirmPassword ? "text" : "password"}
                     placeholder="••••••••"
                     className="bg-background/50 pr-10"
+                    value={confirmPassword}
+                    onChange={(e) => setConfirmPassword(e.target.value)}
+                    required
                   />
                   <button
                     type="button"
@@ -105,7 +176,7 @@ const Register = () => {
               </div>
 
               <div className="flex items-start space-x-2 text-sm">
-                <input type="checkbox" className="rounded border-border mt-0.5" />
+                <input type="checkbox" className="rounded border-border mt-0.5" required />
                 <span className="text-muted-foreground">
                   <Link to="#" className="text-primary hover:text-primary/80">Kullanım Şartları</Link> ve{" "}
                   <Link to="#" className="text-primary hover:text-primary/80">Gizlilik Politikası</Link>'nı 
@@ -113,8 +184,8 @@ const Register = () => {
                 </span>
               </div>
 
-              <Button className="w-full btn-primary" size="lg">
-                Kayıt Ol
+              <Button type="submit" className="w-full btn-primary" size="lg" disabled={loading}>
+                {loading ? "Kayıt olunuyor..." : "Kayıt Ol"}
               </Button>
             </form>
 
