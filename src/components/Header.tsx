@@ -35,21 +35,21 @@ const Header = () => {
 
           {/* Desktop Navigation */}
           <nav className="hidden md:flex items-center space-x-8">
-            <a href="#" className="text-foreground hover:text-primary transition-colors">
+            <Link to="/" className="text-foreground hover:text-primary transition-colors">
               Ana Sayfa
-            </a>
-            <a href="#" className="text-foreground hover:text-primary transition-colors flex items-center space-x-1">
+            </Link>
+            <Link to="/garages" className="text-foreground hover:text-primary transition-colors flex items-center space-x-1">
               <Home className="w-4 h-4" />
               <span>Garajlar</span>
-            </a>
-            <a href="#" className="text-foreground hover:text-primary transition-colors flex items-center space-x-1">
+            </Link>
+            <Link to="/blog" className="text-foreground hover:text-primary transition-colors flex items-center space-x-1">
               <BookOpen className="w-4 h-4" />
               <span>Blog</span>
-            </a>
-            <a href="#" className="text-foreground hover:text-primary transition-colors flex items-center space-x-1">
+            </Link>
+            <Link to="/community" className="text-foreground hover:text-primary transition-colors flex items-center space-x-1">
               <Users className="w-4 h-4" />
               <span>Topluluk</span>
-            </a>
+            </Link>
           </nav>
 
           {/* Search & Auth */}
@@ -97,21 +97,21 @@ const Header = () => {
                 />
               </div>
               
-              <a href="#" className="text-foreground hover:text-primary transition-colors py-2">
+              <Link to="/" className="text-foreground hover:text-primary transition-colors py-2">
                 Ana Sayfa
-              </a>
-              <a href="#" className="text-foreground hover:text-primary transition-colors py-2 flex items-center space-x-2">
+              </Link>
+              <Link to="/garages" className="text-foreground hover:text-primary transition-colors py-2 flex items-center space-x-2">
                 <Home className="w-4 h-4" />
                 <span>Garajlar</span>
-              </a>
-              <a href="#" className="text-foreground hover:text-primary transition-colors py-2 flex items-center space-x-2">
+              </Link>
+              <Link to="/blog" className="text-foreground hover:text-primary transition-colors py-2 flex items-center space-x-2">
                 <BookOpen className="w-4 h-4" />
                 <span>Blog</span>
-              </a>
-              <a href="#" className="text-foreground hover:text-primary transition-colors py-2 flex items-center space-x-2">
+              </Link>
+              <Link to="/community" className="text-foreground hover:text-primary transition-colors py-2 flex items-center space-x-2">
                 <Users className="w-4 h-4" />
                 <span>Topluluk</span>
-              </a>
+              </Link>
               
               <div className="flex flex-col space-y-2 pt-4 border-t border-border">
                 <Button variant="ghost" className="btn-ghost justify-start" asChild>
