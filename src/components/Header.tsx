@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { 
   Car, 
   User, 
@@ -10,13 +11,21 @@ import {
   Home,
   BookOpen,
   Users,
-  Settings
+  Settings,
+  LogOut
 } from "lucide-react";
+import { useAuth } from "@/contexts/AuthContext";
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const { user, signOut, loading } = useAuth();
 
   const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
+
+  const handleSignOut = async () => {
+    await signOut();
+    setIsMenuOpen(false);
+  };
 
   return (
     <header className="fixed top-0 left-0 right-0 z-50 bg-background/90 backdrop-blur-md border-b border-border">
@@ -62,17 +71,37 @@ const Header = () => {
                 className="pl-10 pr-4 py-2 bg-input border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary text-sm w-64"
               />
             </div>
-            <Button variant="ghost" size="sm" className="btn-ghost" asChild>
-              <Link to="/login">
-                <User className="w-4 h-4 mr-2" />
-                Giriş Yap
-              </Link>
-            </Button>
-            <Button size="sm" className="btn-primary" asChild>
-              <Link to="/register">
-                Kayıt Ol
-              </Link>
-            </Button>
+            
+            {loading ? (
+              <div className="w-8 h-8 rounded-full bg-muted animate-pulse"></div>
+            ) : user ? (
+              <div className="flex items-center space-x-3">
+                <Avatar className="w-8 h-8">
+                  <AvatarFallback>
+                    <User className="w-4 h-4" />
+                  </AvatarFallback>
+                </Avatar>
+                <span className="text-sm font-medium">Hoş geldin!</span>
+                <Button variant="ghost" size="sm" onClick={handleSignOut}>
+                  <LogOut className="w-4 h-4 mr-2" />
+                  Çıkış
+                </Button>
+              </div>
+            ) : (
+              <>
+                <Button variant="ghost" size="sm" className="btn-ghost" asChild>
+                  <Link to="/login">
+                    <User className="w-4 h-4 mr-2" />
+                    Giriş Yap
+                  </Link>
+                </Button>
+                <Button size="sm" className="btn-primary" asChild>
+                  <Link to="/register">
+                    Kayıt Ol
+                  </Link>
+                </Button>
+              </>
+            )}
           </div>
 
           {/* Mobile menu button */}
@@ -114,17 +143,36 @@ const Header = () => {
               </Link>
               
               <div className="flex flex-col space-y-2 pt-4 border-t border-border">
-                <Button variant="ghost" className="btn-ghost justify-start" asChild>
-                  <Link to="/login">
-                    <User className="w-4 h-4 mr-2" />
-                    Giriş Yap
-                  </Link>
-                </Button>
-                <Button className="btn-primary justify-start" asChild>
-                  <Link to="/register">
-                    Kayıt Ol
-                  </Link>
-                </Button>
+                {user ? (
+                  <>
+                    <div className="flex items-center space-x-2 py-2">
+                      <Avatar className="w-6 h-6">
+                        <AvatarFallback>
+                          <User className="w-3 h-3" />
+                        </AvatarFallback>
+                      </Avatar>
+                      <span className="text-sm">Hoş geldin!</span>
+                    </div>
+                    <Button variant="ghost" className="btn-ghost justify-start" onClick={handleSignOut}>
+                      <LogOut className="w-4 h-4 mr-2" />
+                      Çıkış Yap
+                    </Button>
+                  </>
+                ) : (
+                  <>
+                    <Button variant="ghost" className="btn-ghost justify-start" asChild>
+                      <Link to="/login">
+                        <User className="w-4 h-4 mr-2" />
+                        Giriş Yap
+                      </Link>
+                    </Button>
+                    <Button className="btn-primary justify-start" asChild>
+                      <Link to="/register">
+                        Kayıt Ol
+                      </Link>
+                    </Button>
+                  </>
+                )}
               </div>
             </nav>
           </div>
