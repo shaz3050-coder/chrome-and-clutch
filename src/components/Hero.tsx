@@ -43,15 +43,15 @@ const Hero = () => {
             {/* Stats */}
             <div className="flex flex-wrap justify-center lg:justify-start gap-8 mb-8 animate-fade-in">
               <div className="text-center">
-                <div className="text-2xl font-bold text-primary">15K+</div>
+                <div className="text-2xl font-bold text-primary">847</div>
                 <div className="text-sm text-muted-foreground">Kayıtlı Üye</div>
               </div>
               <div className="text-center">
-                <div className="text-2xl font-bold text-primary">3.2K+</div>
+                <div className="text-2xl font-bold text-primary">124</div>
                 <div className="text-sm text-muted-foreground">Sanal Garaj</div>
               </div>
               <div className="text-center">
-                <div className="text-2xl font-bold text-primary">45K+</div>
+                <div className="text-2xl font-bold text-primary">1.2K+</div>
                 <div className="text-sm text-muted-foreground">Paylaşılan Fotoğraf</div>
               </div>
             </div>
@@ -89,7 +89,7 @@ const Hero = () => {
                   ))}
                 </div>
                 <div className="text-sm text-muted-foreground">
-                  <span className="font-semibold text-foreground">500+ araç tutkunu</span> sonvites.net'i sevdi
+                  <span className="font-semibold text-foreground">84 araç tutkunu</span> sonvites.net'i sevdi
                 </div>
               </div>
             </div>
@@ -106,7 +106,7 @@ const Hero = () => {
             </div>
             <div>
               <div className="text-sm font-medium">Aktif Topluluk</div>
-              <div className="text-xs text-muted-foreground">2.1K online kullanıcı</div>
+              <div className="text-xs text-muted-foreground">23 online kullanıcı</div>
             </div>
           </div>
         </div>
