@@ -14,36 +14,36 @@ const FeaturedCars = () => {
   const featuredCars = [
     {
       id: "1",
-      title: "BMW M3 Competition",
-      owner: "speedhunter92",
+      title: "Volkswagen Golf GTI",
+      owner: "mehmet_ankara",
       image: bmwM3,
-      description: "750hp'lik canavar. Turbo upgrade, exhaust, remap...",
-      likes: 342,
-      views: 1250,
-      comments: 28,
-      tags: ["BMW", "M3", "Turbo", "Modified"]
+      description: "Stage 2 remap ve intake ile 250hp'ye çıkarılmış GTI. Günlük kullanıma uygun.",
+      likes: 156,
+      views: 450,
+      comments: 12,
+      tags: ["VW", "Golf", "GTI", "Stage2"]
     },
     {
       id: "2", 
-      title: "Audi RS6 Avant",
-      owner: "wagonlover",
+      title: "Honda Civic Type R",
+      owner: "ali_istanbul",
       image: audiRS6,
-      description: "Ailesiz değil, hızlı. RS6 ile günlük kullanım keyfi.",
-      likes: 567,
-      views: 2100,
-      comments: 45,
-      tags: ["Audi", "RS6", "Wagon", "Daily"]
+      description: "FK8 Type R ile pist günleri. Orijinal performans, maksimum keyif.",
+      likes: 289,
+      views: 720,
+      comments: 18,
+      tags: ["Honda", "Civic", "TypeR", "Track"]
     },
     {
       id: "3",
-      title: "Mercedes C63 AMG",
-      owner: "amgpower",
+      title: "BMW 320i F30",
+      owner: "emre_izmir",
       image: mercedesC63,
-      description: "V8'in son nefesi. Doğal emişli güzellik.",
-      likes: 289,
-      views: 890,
-      comments: 19,
-      tags: ["Mercedes", "AMG", "V8", "Exhaust"]
+      description: "M-Performance kitleri ile görsel upgrade. Stance tarzı setup.",
+      likes: 134,
+      views: 380,
+      comments: 8,
+      tags: ["BMW", "320i", "MPerformance", "Stance"]
     }
   ];
 

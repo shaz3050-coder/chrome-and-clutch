@@ -6,9 +6,9 @@ const RecentActivity = () => {
     {
       id: 1,
       type: "new_garage",
-      user: "turbotuner",
+      user: "mustafa_ankara",
       action: "yeni garaj oluşturdu",
-      target: "Nissan GT-R R35",
+      target: "Renault Megane RS",
       time: "2 saat önce",
       icon: Camera,
       color: "text-green-500"
@@ -16,9 +16,9 @@ const RecentActivity = () => {
     {
       id: 2,
       type: "modification",
-      user: "driftking",
+      user: "can_bursa",
       action: "modifikasyon ekledi",
-      target: "BMW E46 M3 - Coilover Setup",
+      target: "Seat Leon FR - Exhaust Upgrade",
       time: "4 saat önce", 
       icon: TrendingUp,
       color: "text-blue-500"
@@ -26,7 +26,7 @@ const RecentActivity = () => {
     {
       id: 3,
       type: "join",
-      user: "speedwagon",
+      user: "ahmet_adana",
       action: "topluluğa katıldı",
       target: "",
       time: "6 saat önce",
@@ -36,9 +36,9 @@ const RecentActivity = () => {
     {
       id: 4,
       type: "garage_update",
-      user: "jdmlover",
+      user: "kemal_trabzon",
       action: "garajını güncelledi",
-      target: "Honda Civic Type-R FK8",
+      target: "Peugeot 208 GTI",
       time: "1 gün önce",
       icon: Camera,
       color: "text-purple-500"
@@ -46,9 +46,9 @@ const RecentActivity = () => {
     {
       id: 5,
       type: "new_garage",
-      user: "german_power",
+      user: "omer_antalya",
       action: "yeni garaj oluşturdu",
-      target: "Porsche 911 Turbo S",
+      target: "Opel Astra OPC",
       time: "2 gün önce",
       icon: Camera,
       color: "text-green-500"
@@ -57,28 +57,28 @@ const RecentActivity = () => {
 
   const popularUsers = [
     {
-      username: "turbotuner",
-      garages: 12,
-      followers: 1240,
-      avatar: "T"
-    },
-    {
-      username: "driftking",
+      username: "mustafa_ankara",
       garages: 8,
-      followers: 892,
-      avatar: "D"
+      followers: 420,
+      avatar: "M"
     },
     {
-      username: "jdmlover",
-      garages: 15,
-      followers: 2100,
-      avatar: "J"
+      username: "zeynep_istanbul",
+      garages: 5,
+      followers: 380,
+      avatar: "Z"
     },
     {
-      username: "speedwagon",
+      username: "can_bursa",
+      garages: 12,
+      followers: 650,
+      avatar: "C"
+    },
+    {
+      username: "ayse_izmir",
       garages: 6,
-      followers: 445,
-      avatar: "S"
+      followers: 290,
+      avatar: "A"
     }
   ];
 
@@ -185,15 +185,15 @@ const RecentActivity = () => {
               <div className="space-y-3">
                 <div className="flex justify-between items-center">
                   <span className="text-muted-foreground">Toplam Üye</span>
-                  <span className="font-bold text-primary">15,420</span>
+                  <span className="font-bold text-primary">4,580</span>
                 </div>
                 <div className="flex justify-between items-center">
                   <span className="text-muted-foreground">Aktif Garaj</span>
-                  <span className="font-bold text-primary">3,289</span>
+                  <span className="font-bold text-primary">1,240</span>
                 </div>
                 <div className="flex justify-between items-center">
                   <span className="text-muted-foreground">Bu Hafta</span>
-                  <span className="font-bold text-green-500">+247</span>
+                  <span className="font-bold text-green-500">+56</span>
                 </div>
               </div>
             </div>
