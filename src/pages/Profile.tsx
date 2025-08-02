@@ -159,6 +159,8 @@ const Profile = () => {
           website: profileData.website,
           avatar_url: profileData.avatar_url,
           phone_number: profileData.phone_number
+        }, {
+          onConflict: 'user_id'
         });
 
       if (error) {

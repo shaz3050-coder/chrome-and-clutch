@@ -169,12 +169,9 @@ const RecentActivity = () => {
                       size="sm" 
                       variant="ghost" 
                       className="text-xs hover:text-primary"
-                      onClick={() => {
-                        // Follow functionality will be implemented later
-                        console.log(`Following ${user.username}`);
-                      }}
+                      asChild
                     >
-                      Takip Et
+                      <a href={`/profile/${user.username}`}>Profil</a>
                     </Button>
                   </div>
                 ))}
@@ -184,9 +181,9 @@ const RecentActivity = () => {
                 <Button 
                   variant="ghost" 
                   className="w-full text-primary hover:text-primary"
-                  onClick={() => window.location.href = '/community'}
+                  asChild
                 >
-                  Tüm Kullanıcıları Gör
+                  <a href="/community">Tüm Kullanıcıları Gör</a>
                 </Button>
               </div>
             </div>

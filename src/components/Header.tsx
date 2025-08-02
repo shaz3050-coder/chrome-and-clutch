@@ -157,18 +157,18 @@ const Header = () => {
                 />
               </form>
               
-              <Link to="/" className="text-foreground hover:text-primary transition-colors py-2">
+              <Link to="/" className="text-foreground hover:text-primary transition-colors py-2" onClick={() => setIsMenuOpen(false)}>
                 Ana Sayfa
               </Link>
-              <Link to="/garages" className="text-foreground hover:text-primary transition-colors py-2 flex items-center space-x-2">
+              <Link to="/garages" className="text-foreground hover:text-primary transition-colors py-2 flex items-center space-x-2" onClick={() => setIsMenuOpen(false)}>
                 <Home className="w-4 h-4" />
                 <span>Garajlar</span>
               </Link>
-              <Link to="/blog" className="text-foreground hover:text-primary transition-colors py-2 flex items-center space-x-2">
+              <Link to="/blog" className="text-foreground hover:text-primary transition-colors py-2 flex items-center space-x-2" onClick={() => setIsMenuOpen(false)}>
                 <BookOpen className="w-4 h-4" />
                 <span>Blog</span>
               </Link>
-              <Link to="/community" className="text-foreground hover:text-primary transition-colors py-2 flex items-center space-x-2">
+              <Link to="/community" className="text-foreground hover:text-primary transition-colors py-2 flex items-center space-x-2" onClick={() => setIsMenuOpen(false)}>
                 <Users className="w-4 h-4" />
                 <span>Topluluk</span>
               </Link>
@@ -185,19 +185,19 @@ const Header = () => {
                       <span className="text-sm">Hoş geldin!</span>
                     </div>
                     <Button variant="ghost" className="btn-ghost justify-start" asChild>
-                      <Link to="/favorites">
+                      <Link to="/favorites" onClick={() => setIsMenuOpen(false)}>
                         <Heart className="w-4 h-4 mr-2" />
                         Favoriler
                       </Link>
                     </Button>
                     <Button variant="ghost" className="btn-ghost justify-start" asChild>
-                      <Link to="/my-garage">
+                      <Link to="/my-garage" onClick={() => setIsMenuOpen(false)}>
                         <Car className="w-4 h-4 mr-2" />
                         Garajım
                       </Link>
                     </Button>
                     <Button variant="ghost" className="btn-ghost justify-start" asChild>
-                      <Link to="/profile">
+                      <Link to="/profile" onClick={() => setIsMenuOpen(false)}>
                         <Settings className="w-4 h-4 mr-2" />
                         Profil
                       </Link>
@@ -210,13 +210,13 @@ const Header = () => {
                 ) : (
                   <>
                     <Button variant="ghost" className="btn-ghost justify-start" asChild>
-                      <Link to="/login">
+                      <Link to="/login" onClick={() => setIsMenuOpen(false)}>
                         <User className="w-4 h-4 mr-2" />
                         Giriş Yap
                       </Link>
                     </Button>
                     <Button className="btn-primary justify-start" asChild>
-                      <Link to="/register">
+                      <Link to="/register" onClick={() => setIsMenuOpen(false)}>
                         Kayıt Ol
                       </Link>
                     </Button>
