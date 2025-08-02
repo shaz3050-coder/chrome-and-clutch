@@ -18,13 +18,15 @@ const Profile = () => {
   const { toast } = useToast();
   const { user } = useAuth();
   const [isLoading, setIsLoading] = useState(false);
+  const [isUploading, setIsUploading] = useState(false);
   const [profileData, setProfileData] = useState({
     username: "",
     full_name: "",
     bio: "",
     location: "",
     website: "",
-    avatar_url: ""
+    avatar_url: "",
+    phone_number: ""
   });
 
   useEffect(() => {
@@ -54,7 +56,8 @@ const Profile = () => {
             bio: data.bio || "",
             location: data.location || "", 
             website: data.website || "",
-            avatar_url: data.avatar_url || ""
+            avatar_url: data.avatar_url || "",
+            phone_number: data.phone_number || ""
           });
         }
       } catch (error) {
@@ -67,6 +70,74 @@ const Profile = () => {
 
   const handleInputChange = (field: string, value: string) => {
     setProfileData(prev => ({ ...prev, [field]: value }));
+  };
+
+  const handleFileUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file || !user) return;
+
+    // Check file size (max 5MB)
+    if (file.size > 5 * 1024 * 1024) {
+      toast({
+        title: "Hata",
+        description: "Dosya boyutu 5MB'dan büyük olamaz.",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    // Check file type
+    if (!file.type.startsWith('image/')) {
+      toast({
+        title: "Hata", 
+        description: "Sadece resim dosyaları yüklenebilir.",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    setIsUploading(true);
+
+    try {
+      const fileExt = file.name.split('.').pop();
+      const fileName = `${user.id}-${Date.now()}.${fileExt}`;
+      const filePath = fileName;
+
+      const { error: uploadError } = await supabase.storage
+        .from('avatars')
+        .upload(filePath, file);
+
+      if (uploadError) {
+        console.error('Upload error:', uploadError);
+        toast({
+          title: "Hata",
+          description: "Dosya yüklenirken bir hata oluştu.",
+          variant: "destructive"
+        });
+        return;
+      }
+
+      const { data: { publicUrl } } = supabase.storage
+        .from('avatars')
+        .getPublicUrl(filePath);
+
+      setProfileData(prev => ({ ...prev, avatar_url: publicUrl }));
+      
+      toast({
+        title: "Başarılı!",
+        description: "Profil fotoğrafı başarıyla yüklendi."
+      });
+
+    } catch (error) {
+      console.error('Unexpected error:', error);
+      toast({
+        title: "Hata",
+        description: "Beklenmeyen bir hata oluştu.",
+        variant: "destructive"
+      });
+    } finally {
+      setIsUploading(false);
+    }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -87,6 +158,7 @@ const Profile = () => {
           location: profileData.location,
           website: profileData.website,
           avatar_url: profileData.avatar_url,
+          phone_number: profileData.phone_number,
           updated_at: new Date().toISOString()
         });
 
@@ -152,9 +224,23 @@ const Profile = () => {
                     <User className="w-12 h-12" />
                   </AvatarFallback>
                 </Avatar>
-                <button className="absolute bottom-0 right-0 w-8 h-8 bg-primary rounded-full flex items-center justify-center hover:bg-primary/80 transition-colors">
-                  <Camera className="w-4 h-4 text-primary-foreground" />
-                </button>
+                <label 
+                  htmlFor="avatar-upload" 
+                  className="absolute bottom-0 right-0 w-8 h-8 bg-primary rounded-full flex items-center justify-center hover:bg-primary/80 transition-colors cursor-pointer"
+                >
+                  {isUploading ? (
+                    <div className="animate-spin rounded-full h-4 w-4 border-2 border-primary-foreground border-t-transparent" />
+                  ) : (
+                    <Camera className="w-4 h-4 text-primary-foreground" />
+                  )}
+                </label>
+                <input
+                  id="avatar-upload"
+                  type="file"
+                  accept="image/*"
+                  onChange={handleFileUpload}
+                  className="hidden"
+                />
               </div>
               <h1 className="heading-large mb-2">Profil Ayarları</h1>
               <p className="text-muted-foreground">
@@ -182,10 +268,17 @@ const Profile = () => {
                         onChange={(e) => handleInputChange("avatar_url", e.target.value)}
                         className="flex-1"
                       />
-                      <Button type="button" variant="outline" size="icon">
-                        <Upload className="w-4 h-4" />
-                      </Button>
+                      <label htmlFor="avatar-upload">
+                        <Button type="button" variant="outline" size="icon" asChild>
+                          <span>
+                            <Upload className="w-4 h-4" />
+                          </span>
+                        </Button>
+                      </label>
                     </div>
+                    <p className="text-xs text-muted-foreground">
+                      URL girebilir veya yukarıdaki yükle butonunu kullanabilirsiniz (maks. 5MB)
+                    </p>
                   </div>
 
                   {/* Username */}
@@ -235,6 +328,20 @@ const Profile = () => {
                       value={profileData.location}
                       onChange={(e) => handleInputChange("location", e.target.value)}
                     />
+                  </div>
+
+                  {/* Phone Number */}
+                  <div className="space-y-2">
+                    <Label htmlFor="phone_number">Telefon Numarası</Label>
+                    <Input
+                      id="phone_number"
+                      placeholder="Örn: +90 555 123 45 67"
+                      value={profileData.phone_number}
+                      onChange={(e) => handleInputChange("phone_number", e.target.value)}
+                    />
+                    <p className="text-xs text-muted-foreground">
+                      İsteğe bağlı - Diğer kullanıcılarla iletişim için
+                    </p>
                   </div>
 
                   {/* Website */}
