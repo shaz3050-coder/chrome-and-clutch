@@ -194,7 +194,7 @@ const Community = () => {
                 </div>
                 <div className="space-y-4">
                   {forums.map((forum) => (
-                    <Card key={forum.id} className="hover-glow cursor-pointer">
+                    <Card key={forum.id} className="hover-glow cursor-pointer" onClick={() => window.location.href = '/forum'}>
                       <CardHeader>
                         <div className="flex items-start justify-between">
                           <div className="flex-1">
@@ -272,9 +272,11 @@ const Community = () => {
                     <Users className="w-4 h-4 mr-2" />
                     Topluluğa Katıl
                   </Button>
-                  <Button variant="outline" className="w-full">
-                    <MessageCircle className="w-4 h-4 mr-2" />
-                    Forum'a Git
+                  <Button variant="outline" className="w-full" asChild>
+                    <a href="/forum">
+                      <MessageCircle className="w-4 h-4 mr-2" />
+                      Forum'a Git
+                    </a>
                   </Button>
                 </CardContent>
               </Card>

@@ -73,9 +73,9 @@ const Footer = () => {
             <div className="mt-6">
               <h4 className="font-medium text-foreground text-sm mb-2">Yasal</h4>
               <ul className="space-y-1 text-xs text-muted-foreground">
-                <li><a href="#" className="hover:text-primary transition-colors">Gizlilik Politikası</a></li>
-                <li><a href="#" className="hover:text-primary transition-colors">Kullanım Şartları</a></li>
-                <li><a href="#" className="hover:text-primary transition-colors">Çerez Politikası</a></li>
+                <li><a href="/privacy-policy" className="hover:text-primary transition-colors">Gizlilik Politikası</a></li>
+                <li><a href="/terms-of-service" className="hover:text-primary transition-colors">Kullanım Şartları</a></li>
+                <li><a href="/cookie-policy" className="hover:text-primary transition-colors">Çerez Politikası</a></li>
               </ul>
             </div>
           </div>
