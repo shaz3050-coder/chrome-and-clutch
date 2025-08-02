@@ -20,13 +20,8 @@ interface FavoriteGarage {
   car_year: number;
   likes_count: number;
   views_count: number;
-  modification_type: string;
-  is_for_sale: boolean;
-  sale_price: string;
-  profiles: {
-    username: string;
-    avatar_url: string;
-  };
+  modification_type?: string;
+  location?: string;
 }
 
 interface FavoritePost {
@@ -39,10 +34,6 @@ interface FavoritePost {
   comments_count: number;
   category: string;
   tags: string[];
-  profiles: {
-    username: string;
-    avatar_url: string;
-  };
 }
 
 const Favorites = () => {
@@ -77,12 +68,7 @@ const Favorites = () => {
             likes_count,
             views_count,
             modification_type,
-            is_for_sale,
-            sale_price,
-            profiles (
-              username,
-              avatar_url
-            )
+            location
           )
         `)
         .eq('user_id', user?.id)
@@ -104,11 +90,7 @@ const Favorites = () => {
             views_count,
             comments_count,
             category,
-            tags,
-            profiles (
-              username,
-              avatar_url
-            )
+            tags
           )
         `)
         .eq('user_id', user?.id)
@@ -216,27 +198,12 @@ const Favorites = () => {
                         alt={garage.name}
                         className="w-full h-48 object-cover"
                       />
-                      {garage.is_for_sale && (
-                        <Badge className="absolute top-2 right-2 bg-green-500">
-                          Satılık
-                        </Badge>
-                      )}
                     </div>
                     <CardHeader>
                       <CardTitle className="flex items-center justify-between">
                         <span>{garage.name}</span>
                         <Heart className="w-5 h-5 fill-red-500 text-red-500" />
                       </CardTitle>
-                      <div className="flex items-center gap-2">
-                        <img 
-                          src={garage.profiles?.avatar_url || '/placeholder.svg'} 
-                          alt={garage.profiles?.username}
-                          className="w-6 h-6 rounded-full object-cover"
-                        />
-                        <span className="text-sm text-muted-foreground">
-                          @{garage.profiles?.username}
-                        </span>
-                      </div>
                     </CardHeader>
                     <CardContent>
                       <p className="text-sm text-muted-foreground mb-3 line-clamp-2">
@@ -246,14 +213,14 @@ const Favorites = () => {
                         <p className="font-medium">
                           {garage.car_brand} {garage.car_model} {garage.car_year}
                         </p>
-                        {garage.modification_type && (
-                          <Badge variant="secondary">{garage.modification_type}</Badge>
-                        )}
-                        {garage.is_for_sale && garage.sale_price && (
-                          <p className="text-green-600 font-semibold">
-                            Fiyat: {garage.sale_price}
-                          </p>
-                        )}
+                         {garage.modification_type && (
+                           <Badge variant="secondary">{garage.modification_type}</Badge>
+                         )}
+                         {garage.location && (
+                           <p className="text-sm text-muted-foreground">
+                             📍 {garage.location}
+                           </p>
+                         )}
                       </div>
                     </CardContent>
                     <CardFooter className="flex justify-between">
@@ -307,16 +274,6 @@ const Favorites = () => {
                         <span className="line-clamp-1">{post.title}</span>
                         <Heart className="w-5 h-5 fill-red-500 text-red-500" />
                       </CardTitle>
-                      <div className="flex items-center gap-2">
-                        <img 
-                          src={post.profiles?.avatar_url || '/placeholder.svg'} 
-                          alt={post.profiles?.username}
-                          className="w-6 h-6 rounded-full object-cover"
-                        />
-                        <span className="text-sm text-muted-foreground">
-                          @{post.profiles?.username}
-                        </span>
-                      </div>
                     </CardHeader>
                     <CardContent>
                       <p className="text-sm text-muted-foreground mb-3 line-clamp-3">
