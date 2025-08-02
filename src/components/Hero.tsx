@@ -59,7 +59,7 @@ const Hero = () => {
             {/* CTA Buttons */}
             <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start animate-fade-in">
               <Button size="lg" className="btn-primary group" asChild>
-                <Link to="/register">
+                <Link to="/create-garage">
                   Garajını Oluştur
                   <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" />
                 </Link>

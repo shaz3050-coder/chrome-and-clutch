@@ -8,6 +8,7 @@ import Index from "./pages/Index";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 import Garages from "./pages/Garages";
+import CreateGarage from "./pages/CreateGarage";
 import GarageDetail from "./pages/GarageDetail";
 import Blog from "./pages/Blog";
 import Community from "./pages/Community";
@@ -27,6 +28,7 @@ const App = () => (
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
             <Route path="/garages" element={<Garages />} />
+            <Route path="/create-garage" element={<CreateGarage />} />
             <Route path="/garage/:id" element={<GarageDetail />} />
             <Route path="/blog" element={<Blog />} />
             <Route path="/community" element={<Community />} />

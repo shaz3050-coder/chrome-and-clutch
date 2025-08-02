@@ -1,6 +1,9 @@
 import { Heart, Eye, MessageCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import carProfile from "@/assets/car-profile.jpg";
+import { Link } from "react-router-dom";
+import bmwM3 from "@/assets/bmw-m3.jpg";
+import audiRS6 from "@/assets/audi-rs6.jpg";
+import mercedesC63 from "@/assets/mercedes-c63.jpg";
 
 const FeaturedCars = () => {
   const featuredCars = [
@@ -8,7 +11,7 @@ const FeaturedCars = () => {
       id: 1,
       title: "BMW M3 Competition",
       owner: "speedhunter92",
-      image: carProfile,
+      image: bmwM3,
       description: "750hp'lik canavar. Turbo upgrade, exhaust, remap...",
       likes: 342,
       views: 1250,
@@ -19,7 +22,7 @@ const FeaturedCars = () => {
       id: 2,
       title: "Audi RS6 Avant",
       owner: "wagonlover",
-      image: carProfile,
+      image: audiRS6,
       description: "Ailesiz değil, hızlı. RS6 ile günlük kullanım keyfi.",
       likes: 567,
       views: 2100,
@@ -30,7 +33,7 @@ const FeaturedCars = () => {
       id: 3,
       title: "Mercedes C63 AMG",
       owner: "amgpower",
-      image: carProfile,
+      image: mercedesC63,
       description: "V8'in son nefesi. Doğal emişli güzellik.",
       likes: 289,
       views: 890,
@@ -130,8 +133,10 @@ const FeaturedCars = () => {
                     <Heart className="w-4 h-4 text-red-500" />
                     <span className="font-medium">{car.likes}</span>
                   </div>
-                  <Button size="sm" variant="ghost" className="text-xs hover:text-primary">
-                    Garajı Gör
+                  <Button size="sm" variant="ghost" className="text-xs hover:text-primary" asChild>
+                    <Link to={`/garage/${car.id}`}>
+                      Garajı Gör
+                    </Link>
                   </Button>
                 </div>
               </div>
@@ -141,8 +146,10 @@ const FeaturedCars = () => {
 
         {/* Call to Action */}
         <div className="text-center animate-fade-in">
-          <Button size="lg" className="btn-primary">
-            Tüm Garajları Keşfet
+          <Button size="lg" className="btn-primary" asChild>
+            <Link to="/garages">
+              Tüm Garajları Keşfet
+            </Link>
           </Button>
         </div>
       </div>
