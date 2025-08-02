@@ -29,7 +29,9 @@ const CreateGarage = () => {
     modificationType: "",
     priceRange: "",
     location: "",
-    imageUrl: ""
+    imageUrl: "",
+    isForSale: false,
+    salePrice: ""
   });
 
   const handleInputChange = (field: string, value: string) => {

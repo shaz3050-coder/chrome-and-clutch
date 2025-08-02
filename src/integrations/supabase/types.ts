@@ -168,11 +168,13 @@ export type Database = {
           id: string
           image_url: string | null
           is_featured: boolean | null
+          is_for_sale: boolean | null
           likes_count: number | null
           location: string | null
           modification_type: string | null
           name: string
           price_range: string | null
+          sale_price: string | null
           torque: number | null
           updated_at: string
           user_id: string
@@ -188,11 +190,13 @@ export type Database = {
           id?: string
           image_url?: string | null
           is_featured?: boolean | null
+          is_for_sale?: boolean | null
           likes_count?: number | null
           location?: string | null
           modification_type?: string | null
           name: string
           price_range?: string | null
+          sale_price?: string | null
           torque?: number | null
           updated_at?: string
           user_id: string
@@ -208,11 +212,13 @@ export type Database = {
           id?: string
           image_url?: string | null
           is_featured?: boolean | null
+          is_for_sale?: boolean | null
           likes_count?: number | null
           location?: string | null
           modification_type?: string | null
           name?: string
           price_range?: string | null
+          sale_price?: string | null
           torque?: number | null
           updated_at?: string
           user_id?: string
