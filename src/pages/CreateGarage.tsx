@@ -38,22 +38,57 @@ const CreateGarage = () => {
   });
 
   const carBrands = [
-    "Audi", "BMW", "Mercedes-Benz", "Volkswagen", "Toyota", "Honda", 
-    "Ford", "Chevrolet", "Nissan", "Hyundai", "Kia", "Mazda", 
-    "Subaru", "Volvo", "Porsche", "Lamborghini", "Ferrari", "Bentley",
-    "Rolls-Royce", "Aston Martin", "McLaren", "Bugatti", "Koenigsegg",
-    "Pagani", "Lotus", "Maserati", "Alfa Romeo", "Fiat", "Jeep",
-    "Land Rover", "Range Rover", "Jaguar", "Mini", "Opel", "Peugeot",
-    "Renault", "Citroën", "Škoda", "SEAT", "Suzuki", "Mitsubishi",
-    "Lexus", "Infiniti", "Acura", "Cadillac", "Lincoln", "Genesis",
-    "Tesla", "Lucid", "Rivian", "BYD", "NIO", "Xpeng", "Li Auto",
-    "Dacia", "Lada", "Tata", "Mahindra", "Maruti Suzuki", "Geely",
-    "Chery", "Great Wall", "MG", "Saic", "GAC", "Dongfeng",
-    "Saab", "Hummer", "Pontiac", "Saturn", "Mercury", "Plymouth",
-    "Isuzu", "Daewoo", "Proton", "Perodua", "Holden", "Vauxhall",
-    "Zastava", "Yugo", "Lancia", "Dodge", "Chrysler", "Ram",
-    "Buick", "GMC", "Oldsmobile", "Studebaker", "Packard", "Hudson",
-    "Nash", "AMC", "DeSoto", "Edsel", "Imperial", "Eagle"
+    // Türk Markaları
+    "Togg", "Otosan", "Karsan", "BMC", "Temsa", "Otokar",
+    
+    // Premium Almanca Markalar
+    "Audi", "BMW", "Mercedes-Benz", "Porsche", "Maybach", "AMG",
+    
+    // Volkswagen Grubu
+    "Volkswagen", "Škoda", "SEAT", "Bentley", "Lamborghini", "Bugatti",
+    
+    // İtalyan Markalar
+    "Ferrari", "Lamborghini", "Maserati", "Alfa Romeo", "Fiat", "Lancia", "Pagani",
+    
+    // İngiliz Markalar
+    "Rolls-Royce", "Aston Martin", "McLaren", "Lotus", "Jaguar", "Land Rover", "Mini", "MG",
+    
+    // Japon Markalar
+    "Toyota", "Honda", "Nissan", "Mazda", "Subaru", "Mitsubishi", "Suzuki", "Lexus", "Infiniti", "Acura",
+    
+    // Amerikan Markalar
+    "Ford", "Chevrolet", "Dodge", "Chrysler", "Ram", "Jeep", "Cadillac", "Lincoln", "Buick", "GMC",
+    "Hummer", "Pontiac", "Oldsmobile", "Mercury", "Plymouth", "Saturn",
+    
+    // Kore Markalar
+    "Hyundai", "Kia", "Genesis", "SsangYong", "Daewoo",
+    
+    // Fransız Markalar
+    "Peugeot", "Renault", "Citroën", "Bugatti", "Alpine", "DS",
+    
+    // İsveç Markalar
+    "Volvo", "Saab", "Koenigsegg", "Polestar",
+    
+    // Elektrikli Markalar
+    "Tesla", "Lucid", "Rivian", "Polestar", "NIO", "Xpeng", "Li Auto", "BYD",
+    
+    // Çin Markalar
+    "BYD", "Geely", "Chery", "Great Wall", "Saic", "GAC", "Dongfeng", "Nio", "Xpeng",
+    
+    // Diğer Avrupa Markalar
+    "Dacia", "Lada", "Zastava", "Yugo", "Opel", "Vauxhall",
+    
+    // Hint Markalar
+    "Tata", "Mahindra", "Maruti Suzuki",
+    
+    // Malezyalı Markalar
+    "Proton", "Perodua",
+    
+    // Avustralya Markalar
+    "Holden",
+    
+    // Klasik/Eski Markalar
+    "Studebaker", "Packard", "Hudson", "Nash", "AMC", "DeSoto", "Edsel", "Imperial", "Eagle", "Isuzu"
   ];
 
   const handleInputChange = (field: string, value: string | number | boolean) => {

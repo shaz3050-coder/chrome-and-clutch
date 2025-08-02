@@ -2,58 +2,50 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
-import { Card, CardContent } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
-import { Car, Eye, Heart, Plus, Edit, Trash2, Calendar } from "lucide-react";
-import { useToast } from "@/hooks/use-toast";
+import { Car, Plus, Edit, Trash2, Eye, Heart, MapPin, Calendar, Settings } from "lucide-react";
 import MetaTags from "@/components/ui/meta";
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger,
-} from "@/components/ui/alert-dialog";
 
-interface MyGarage {
+interface Garage {
   id: string;
   name: string;
   description: string;
-  image_url: string;
   car_brand: string;
   car_model: string;
   car_year: number;
+  horsepower: number;
+  torque: number;
+  modification_type: string;
+  price_range: string;
+  location: string;
+  image_url: string;
+  is_for_sale: boolean;
+  sale_price: string;
   likes_count: number;
   views_count: number;
   created_at: string;
-  is_for_sale: boolean;
-  sale_price: string;
+  updated_at: string;
 }
 
 const MyGarage = () => {
   const navigate = useNavigate();
-  const { user } = useAuth();
   const { toast } = useToast();
-  const [garages, setGarages] = useState<MyGarage[]>([]);
-  const [loading, setLoading] = useState(true);
+  const { user } = useAuth();
+  const [garages, setGarages] = useState<Garage[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    if (!user) {
-      navigate("/login");
-      return;
+    if (user) {
+      fetchGarages();
     }
+  }, [user]);
 
-    fetchMyGarages();
-  }, [user, navigate]);
-
-  const fetchMyGarages = async () => {
+  const fetchGarages = async () => {
     if (!user) return;
 
     try {
@@ -65,6 +57,11 @@ const MyGarage = () => {
 
       if (error) {
         console.error('Error fetching garages:', error);
+        toast({
+          title: "Hata",
+          description: "Garajlar yüklenirken bir hata oluştu.",
+          variant: "destructive"
+        });
         return;
       }
 
@@ -72,19 +69,20 @@ const MyGarage = () => {
     } catch (error) {
       console.error('Unexpected error:', error);
     } finally {
-      setLoading(false);
+      setIsLoading(false);
     }
   };
 
-  const deleteGarage = async (garageId: string) => {
-    if (!user) return;
+  const handleDeleteGarage = async (garageId: string) => {
+    if (!confirm('Bu garajı silmek istediğinizden emin misiniz?')) {
+      return;
+    }
 
     try {
       const { error } = await supabase
         .from('garages')
         .delete()
-        .eq('id', garageId)
-        .eq('user_id', user.id);
+        .eq('id', garageId);
 
       if (error) {
         console.error('Error deleting garage:', error);
@@ -96,11 +94,12 @@ const MyGarage = () => {
         return;
       }
 
-      setGarages(prev => prev.filter(garage => garage.id !== garageId));
       toast({
         title: "Başarılı!",
         description: "Garaj başarıyla silindi."
       });
+
+      fetchGarages(); // Refresh the list
     } catch (error) {
       console.error('Unexpected error:', error);
     }
@@ -114,7 +113,7 @@ const MyGarage = () => {
           <div className="container mx-auto px-4 py-16 text-center">
             <h1 className="heading-large mb-4">Giriş Gerekli</h1>
             <p className="text-muted-foreground mb-8">
-              Garajınızı görüntülemek için önce giriş yapmalısınız.
+              Garajlarınızı görmek için önce giriş yapmalısınız.
             </p>
             <Button asChild>
               <a href="/login">Giriş Yap</a>
@@ -130,140 +129,150 @@ const MyGarage = () => {
     <div className="min-h-screen bg-background">
       <MetaTags 
         title="Garajım - sonvites.net"
-        description="Kendi garajınızı yönetin ve araçlarınızı düzenleyin."
+        description="Oluşturduğunuz garajları yönetin ve düzenleyin."
       />
       <Header />
       <main className="pt-16">
         <div className="container mx-auto px-4 py-16">
-          <div className="flex items-center justify-between mb-12">
+          {/* Header */}
+          <div className="flex items-center justify-between mb-8">
             <div>
-              <h1 className="heading-large mb-4">Garajım</h1>
+              <h1 className="heading-large mb-2">Garajım</h1>
               <p className="text-muted-foreground">
-                Oluşturduğunuz garajları yönetin ve düzenleyin.
+                Oluşturduğunuz garajları yönetin ve düzenleyin
               </p>
             </div>
-            <Button onClick={() => navigate("/create-garage")} className="btn-primary">
-              <Plus className="w-4 h-4 mr-2" />
-              Yeni Garaj Oluştur
+            <Button asChild className="glow-yellow">
+              <a href="/create-garage">
+                <Plus className="w-4 h-4 mr-2" />
+                Yeni Garaj
+              </a>
             </Button>
           </div>
 
-          {loading ? (
+          {/* Loading State */}
+          {isLoading && (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {[...Array(6)].map((_, i) => (
-                <div key={i} className="animate-pulse">
-                  <div className="bg-muted rounded-lg h-48 mb-4"></div>
-                  <div className="bg-muted rounded h-4 mb-2"></div>
-                  <div className="bg-muted rounded h-4 w-2/3"></div>
-                </div>
+                <Card key={i} className="animate-pulse">
+                  <div className="h-48 bg-muted rounded-t-lg"></div>
+                  <CardContent className="p-4">
+                    <div className="h-6 bg-muted rounded mb-2"></div>
+                    <div className="h-4 bg-muted rounded mb-4"></div>
+                    <div className="flex space-x-2">
+                      <div className="h-8 bg-muted rounded flex-1"></div>
+                      <div className="h-8 bg-muted rounded flex-1"></div>
+                    </div>
+                  </CardContent>
+                </Card>
               ))}
             </div>
-          ) : garages.length === 0 ? (
+          )}
+
+          {/* Empty State */}
+          {!isLoading && garages.length === 0 && (
             <div className="text-center py-16">
-              <Car className="w-16 h-16 text-muted-foreground mx-auto mb-4" />
+              <div className="w-16 h-16 bg-muted rounded-full flex items-center justify-center mx-auto mb-4">
+                <Car className="w-8 h-8 text-muted-foreground" />
+              </div>
               <h2 className="text-xl font-semibold mb-2">Henüz garajınız yok</h2>
               <p className="text-muted-foreground mb-6">
-                İlk garajınızı oluşturun ve araç tutkunlarıyla paylaşın.
+                İlk garajınızı oluşturun ve araç tutkusunu paylaşmaya başlayın
               </p>
-              <Button onClick={() => navigate("/create-garage")}>
-                <Plus className="w-4 h-4 mr-2" />
-                İlk Garajını Oluştur
+              <Button asChild>
+                <a href="/create-garage">
+                  <Plus className="w-4 h-4 mr-2" />
+                  İlk Garajımı Oluştur
+                </a>
               </Button>
             </div>
-          ) : (
+          )}
+
+          {/* Garages Grid */}
+          {!isLoading && garages.length > 0 && (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {garages.map((garage) => (
-                <Card key={garage.id} className="group hover:shadow-lg transition-shadow">
-                  <div className="relative overflow-hidden rounded-t-lg">
+                <Card key={garage.id} className="group hover:shadow-lg transition-all duration-300 overflow-hidden">
+                  {/* Image */}
+                  <div className="relative h-48 overflow-hidden">
                     <img
                       src={garage.image_url || '/placeholder.svg'}
                       alt={garage.name}
-                      className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300"
+                      className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
                     />
                     {garage.is_for_sale && (
-                      <Badge className="absolute top-2 left-2 bg-green-600 text-white">
+                      <Badge className="absolute top-2 right-2 bg-green-500 text-white">
                         Satılık
                       </Badge>
                     )}
                   </div>
-                  
+
                   <CardContent className="p-4">
-                    <div className="flex items-center justify-between mb-2">
-                      <Badge variant="outline">{garage.car_brand}</Badge>
-                      <span className="text-sm text-muted-foreground">
-                        {garage.car_year}
-                      </span>
-                    </div>
+                    {/* Title */}
+                    <h3 className="font-semibold text-lg mb-1 truncate">{garage.name}</h3>
                     
-                    <h3 className="font-semibold mb-2 line-clamp-2">{garage.name}</h3>
-                    <p className="text-sm text-muted-foreground mb-3 line-clamp-2">
-                      {garage.description}
+                    {/* Car Info */}
+                    <p className="text-muted-foreground text-sm mb-3">
+                      {garage.car_brand} {garage.car_model} {garage.car_year && `(${garage.car_year})`}
                     </p>
-                    
-                    {garage.is_for_sale && garage.sale_price && (
-                      <p className="text-lg font-semibold text-green-600 mb-2">
-                        {garage.sale_price}
-                      </p>
-                    )}
-                    
-                    <div className="flex items-center justify-between text-sm text-muted-foreground mb-4">
-                      <span className="flex items-center space-x-1">
+
+                    {/* Stats */}
+                    <div className="flex items-center gap-4 text-sm text-muted-foreground mb-4">
+                      <div className="flex items-center gap-1">
                         <Heart className="w-4 h-4" />
-                        <span>{garage.likes_count}</span>
-                      </span>
-                      <span className="flex items-center space-x-1">
+                        {garage.likes_count}
+                      </div>
+                      <div className="flex items-center gap-1">
                         <Eye className="w-4 h-4" />
-                        <span>{garage.views_count}</span>
-                      </span>
-                      <span className="flex items-center space-x-1">
-                        <Calendar className="w-4 h-4" />
-                        <span>{new Date(garage.created_at).toLocaleDateString('tr-TR')}</span>
-                      </span>
+                        {garage.views_count}
+                      </div>
+                      {garage.location && (
+                        <div className="flex items-center gap-1">
+                          <MapPin className="w-4 h-4" />
+                          {garage.location.split(',')[0]}
+                        </div>
+                      )}
                     </div>
-                    
-                    <div className="flex items-center justify-between space-x-2">
-                      <Button 
-                        size="sm" 
+
+                    {/* Modification Type */}
+                    {garage.modification_type && (
+                      <Badge variant="secondary" className="mb-4">
+                        {garage.modification_type}
+                      </Badge>
+                    )}
+
+                    {/* Created Date */}
+                    <div className="flex items-center gap-1 text-xs text-muted-foreground mb-4">
+                      <Calendar className="w-3 h-3" />
+                      {new Date(garage.created_at).toLocaleDateString('tr-TR')}
+                    </div>
+
+                    {/* Actions */}
+                    <div className="flex gap-2">
+                      <Button
                         variant="outline"
+                        size="sm"
                         onClick={() => navigate(`/garage/${garage.id}`)}
                         className="flex-1"
                       >
-                        <Car className="w-4 h-4 mr-2" />
+                        <Eye className="w-4 h-4 mr-1" />
                         Görüntüle
                       </Button>
-                      
-                      <Button 
-                        size="sm" 
+                      <Button
                         variant="outline"
-                        onClick={() => navigate(`/edit-garage/${garage.id}`)}
+                        size="sm"
+                        onClick={() => navigate(`/garage/${garage.id}/edit`)}
                       >
                         <Edit className="w-4 h-4" />
                       </Button>
-                      
-                      <AlertDialog>
-                        <AlertDialogTrigger asChild>
-                          <Button size="sm" variant="outline" className="text-red-600 hover:text-red-700">
-                            <Trash2 className="w-4 h-4" />
-                          </Button>
-                        </AlertDialogTrigger>
-                        <AlertDialogContent>
-                          <AlertDialogHeader>
-                            <AlertDialogTitle>Garajı Sil</AlertDialogTitle>
-                            <AlertDialogDescription>
-                              Bu garajı silmek istediğinize emin misiniz? Bu işlem geri alınamaz.
-                            </AlertDialogDescription>
-                          </AlertDialogHeader>
-                          <AlertDialogFooter>
-                            <AlertDialogCancel>İptal</AlertDialogCancel>
-                            <AlertDialogAction 
-                              onClick={() => deleteGarage(garage.id)}
-                              className="bg-red-600 hover:bg-red-700"
-                            >
-                              Sil
-                            </AlertDialogAction>
-                          </AlertDialogFooter>
-                        </AlertDialogContent>
-                      </AlertDialog>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => handleDeleteGarage(garage.id)}
+                        className="text-red-500 hover:text-red-700"
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </Button>
                     </div>
                   </CardContent>
                 </Card>
