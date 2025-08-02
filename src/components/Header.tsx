@@ -17,6 +17,7 @@ import {
 } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import LanguageSwitcher from "./LanguageSwitcher";
+import { ThemeToggle } from "./ThemeToggle";
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -77,6 +78,7 @@ const Header = () => {
 
           {/* Search & Auth */}
           <div className="hidden md:flex items-center space-x-4">
+            <ThemeToggle />
             <LanguageSwitcher />
             <form onSubmit={handleSearch} className="relative">
               <Search className="w-4 h-4 absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground" />
