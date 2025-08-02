@@ -12,7 +12,8 @@ import {
   BookOpen,
   Users,
   Settings,
-  LogOut
+  LogOut,
+  Heart
 } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import LanguageSwitcher from "./LanguageSwitcher";
@@ -92,6 +93,14 @@ const Header = () => {
               <div className="w-8 h-8 rounded-full bg-muted animate-pulse"></div>
             ) : user ? (
               <div className="flex items-center space-x-3">
+                <Link to="/favorites" className="flex items-center space-x-2 hover:opacity-80 transition-opacity">
+                  <Heart className="w-4 h-4" />
+                  <span className="text-sm font-medium">Favoriler</span>
+                </Link>
+                <Link to="/my-garage" className="flex items-center space-x-2 hover:opacity-80 transition-opacity">
+                  <Car className="w-4 h-4" />
+                  <span className="text-sm font-medium">Garajım</span>
+                </Link>
                 <Link to="/profile" className="flex items-center space-x-2 hover:opacity-80 transition-opacity">
                   <Avatar className="w-8 h-8">
                     <AvatarFallback>

@@ -158,8 +158,7 @@ const Profile = () => {
           location: profileData.location,
           website: profileData.website,
           avatar_url: profileData.avatar_url,
-          phone_number: profileData.phone_number,
-          updated_at: new Date().toISOString()
+          phone_number: profileData.phone_number
         });
 
       if (error) {

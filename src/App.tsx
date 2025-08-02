@@ -20,6 +20,8 @@ import CookiePolicy from "./pages/CookiePolicy";
 import Forum from "./pages/Forum";
 import Search from "./pages/Search";
 import Premium from "./pages/Premium";
+import Favorites from "./pages/Favorites";
+import MyGarage from "./pages/MyGarage";
 
 const queryClient = new QueryClient();
 
@@ -43,6 +45,8 @@ const App = () => (
             <Route path="/forum" element={<Forum />} />
             <Route path="/search" element={<Search />} />
             <Route path="/premium" element={<Premium />} />
+            <Route path="/favorites" element={<Favorites />} />
+            <Route path="/my-garage" element={<MyGarage />} />
             <Route path="/privacy-policy" element={<PrivacyPolicy />} />
             <Route path="/terms-of-service" element={<TermsOfService />} />
             <Route path="/cookie-policy" element={<CookiePolicy />} />

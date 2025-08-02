@@ -2,16 +2,27 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
-import { Heart, Car, Eye, Calendar } from "lucide-react";
+import { Car, Eye, Heart, Plus, Edit, Trash2, Calendar } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import MetaTags from "@/components/ui/meta";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 
-interface FavoriteGarage {
+interface MyGarage {
   id: string;
   name: string;
   description: string;
@@ -22,18 +33,15 @@ interface FavoriteGarage {
   likes_count: number;
   views_count: number;
   created_at: string;
-  user_id: string;
-  profiles: {
-    username: string;
-    full_name: string;
-  };
+  is_for_sale: boolean;
+  sale_price: string;
 }
 
-const Favorites = () => {
+const MyGarage = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
   const { toast } = useToast();
-  const [favorites, setFavorites] = useState<FavoriteGarage[]>([]);
+  const [garages, setGarages] = useState<MyGarage[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -42,45 +50,25 @@ const Favorites = () => {
       return;
     }
 
-    fetchFavorites();
+    fetchMyGarages();
   }, [user, navigate]);
 
-  const fetchFavorites = async () => {
+  const fetchMyGarages = async () => {
     if (!user) return;
 
     try {
       const { data, error } = await supabase
-        .from('favorites')
-        .select(`
-          garage_id,
-          garages!inner (
-            id,
-            name,
-            description,
-            image_url,
-            car_brand,
-            car_model,
-            car_year,
-            likes_count,
-            views_count,
-            created_at,
-            user_id
-          )
-        `)
+        .from('garages')
+        .select('*')
         .eq('user_id', user.id)
-        .not('garage_id', 'is', null);
+        .order('created_at', { ascending: false });
 
       if (error) {
-        console.error('Error fetching favorites:', error);
+        console.error('Error fetching garages:', error);
         return;
       }
 
-      const favoriteGarages = data?.map(item => ({
-        ...item.garages,
-        profiles: { username: '', full_name: '' }
-      })) || [];
-
-      setFavorites(favoriteGarages);
+      setGarages(data || []);
     } catch (error) {
       console.error('Unexpected error:', error);
     } finally {
@@ -88,30 +76,30 @@ const Favorites = () => {
     }
   };
 
-  const removeFavorite = async (garageId: string) => {
+  const deleteGarage = async (garageId: string) => {
     if (!user) return;
 
     try {
       const { error } = await supabase
-        .from('favorites')
+        .from('garages')
         .delete()
-        .eq('user_id', user.id)
-        .eq('garage_id', garageId);
+        .eq('id', garageId)
+        .eq('user_id', user.id);
 
       if (error) {
-        console.error('Error removing favorite:', error);
+        console.error('Error deleting garage:', error);
         toast({
           title: "Hata",
-          description: "Favori kaldırılırken bir hata oluştu.",
+          description: "Garaj silinirken bir hata oluştu.",
           variant: "destructive"
         });
         return;
       }
 
-      setFavorites(prev => prev.filter(garage => garage.id !== garageId));
+      setGarages(prev => prev.filter(garage => garage.id !== garageId));
       toast({
         title: "Başarılı!",
-        description: "Garaj favorilerden kaldırıldı."
+        description: "Garaj başarıyla silindi."
       });
     } catch (error) {
       console.error('Unexpected error:', error);
@@ -126,7 +114,7 @@ const Favorites = () => {
           <div className="container mx-auto px-4 py-16 text-center">
             <h1 className="heading-large mb-4">Giriş Gerekli</h1>
             <p className="text-muted-foreground mb-8">
-              Favorileri görüntülemek için önce giriş yapmalısınız.
+              Garajınızı görüntülemek için önce giriş yapmalısınız.
             </p>
             <Button asChild>
               <a href="/login">Giriş Yap</a>
@@ -141,17 +129,23 @@ const Favorites = () => {
   return (
     <div className="min-h-screen bg-background">
       <MetaTags 
-        title="Favorilerim - sonvites.net"
-        description="Beğendiğiniz garajları görüntüleyin ve yönetin."
+        title="Garajım - sonvites.net"
+        description="Kendi garajınızı yönetin ve araçlarınızı düzenleyin."
       />
       <Header />
       <main className="pt-16">
         <div className="container mx-auto px-4 py-16">
-          <div className="text-center mb-12">
-            <h1 className="heading-large mb-4">Favorilerim</h1>
-            <p className="text-muted-foreground max-w-2xl mx-auto">
-              Beğendiğiniz garajlar burada. İstediğiniz zaman geri dönüp inceleyebilirsiniz.
-            </p>
+          <div className="flex items-center justify-between mb-12">
+            <div>
+              <h1 className="heading-large mb-4">Garajım</h1>
+              <p className="text-muted-foreground">
+                Oluşturduğunuz garajları yönetin ve düzenleyin.
+              </p>
+            </div>
+            <Button onClick={() => navigate("/create-garage")} className="btn-primary">
+              <Plus className="w-4 h-4 mr-2" />
+              Yeni Garaj Oluştur
+            </Button>
           </div>
 
           {loading ? (
@@ -164,20 +158,21 @@ const Favorites = () => {
                 </div>
               ))}
             </div>
-          ) : favorites.length === 0 ? (
+          ) : garages.length === 0 ? (
             <div className="text-center py-16">
-              <Heart className="w-16 h-16 text-muted-foreground mx-auto mb-4" />
-              <h2 className="text-xl font-semibold mb-2">Henüz favori garajınız yok</h2>
+              <Car className="w-16 h-16 text-muted-foreground mx-auto mb-4" />
+              <h2 className="text-xl font-semibold mb-2">Henüz garajınız yok</h2>
               <p className="text-muted-foreground mb-6">
-                Beğendiğiniz garajları favorilere ekleyerek buradan takip edebilirsiniz.
+                İlk garajınızı oluşturun ve araç tutkunlarıyla paylaşın.
               </p>
-              <Button onClick={() => navigate("/garages")}>
-                Garajları Keşfet
+              <Button onClick={() => navigate("/create-garage")}>
+                <Plus className="w-4 h-4 mr-2" />
+                İlk Garajını Oluştur
               </Button>
             </div>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {favorites.map((garage) => (
+              {garages.map((garage) => (
                 <Card key={garage.id} className="group hover:shadow-lg transition-shadow">
                   <div className="relative overflow-hidden rounded-t-lg">
                     <img
@@ -185,14 +180,11 @@ const Favorites = () => {
                       alt={garage.name}
                       className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300"
                     />
-                    <Button
-                      variant="secondary"
-                      size="icon"
-                      className="absolute top-2 right-2 opacity-80 hover:opacity-100"
-                      onClick={() => removeFavorite(garage.id)}
-                    >
-                      <Heart className="w-4 h-4 fill-current text-red-500" />
-                    </Button>
+                    {garage.is_for_sale && (
+                      <Badge className="absolute top-2 left-2 bg-green-600 text-white">
+                        Satılık
+                      </Badge>
+                    )}
                   </div>
                   
                   <CardContent className="p-4">
@@ -208,7 +200,13 @@ const Favorites = () => {
                       {garage.description}
                     </p>
                     
-                    <div className="flex items-center justify-between text-sm text-muted-foreground mb-3">
+                    {garage.is_for_sale && garage.sale_price && (
+                      <p className="text-lg font-semibold text-green-600 mb-2">
+                        {garage.sale_price}
+                      </p>
+                    )}
+                    
+                    <div className="flex items-center justify-between text-sm text-muted-foreground mb-4">
                       <span className="flex items-center space-x-1">
                         <Heart className="w-4 h-4" />
                         <span>{garage.likes_count}</span>
@@ -223,17 +221,49 @@ const Favorites = () => {
                       </span>
                     </div>
                     
-                    <div className="flex items-center justify-between">
-                      <span className="text-sm text-muted-foreground">
-                        @{garage.profiles?.username || 'Anonim'}
-                      </span>
+                    <div className="flex items-center justify-between space-x-2">
                       <Button 
                         size="sm" 
+                        variant="outline"
                         onClick={() => navigate(`/garage/${garage.id}`)}
+                        className="flex-1"
                       >
                         <Car className="w-4 h-4 mr-2" />
                         Görüntüle
                       </Button>
+                      
+                      <Button 
+                        size="sm" 
+                        variant="outline"
+                        onClick={() => navigate(`/edit-garage/${garage.id}`)}
+                      >
+                        <Edit className="w-4 h-4" />
+                      </Button>
+                      
+                      <AlertDialog>
+                        <AlertDialogTrigger asChild>
+                          <Button size="sm" variant="outline" className="text-red-600 hover:text-red-700">
+                            <Trash2 className="w-4 h-4" />
+                          </Button>
+                        </AlertDialogTrigger>
+                        <AlertDialogContent>
+                          <AlertDialogHeader>
+                            <AlertDialogTitle>Garajı Sil</AlertDialogTitle>
+                            <AlertDialogDescription>
+                              Bu garajı silmek istediğinize emin misiniz? Bu işlem geri alınamaz.
+                            </AlertDialogDescription>
+                          </AlertDialogHeader>
+                          <AlertDialogFooter>
+                            <AlertDialogCancel>İptal</AlertDialogCancel>
+                            <AlertDialogAction 
+                              onClick={() => deleteGarage(garage.id)}
+                              className="bg-red-600 hover:bg-red-700"
+                            >
+                              Sil
+                            </AlertDialogAction>
+                          </AlertDialogFooter>
+                        </AlertDialogContent>
+                      </AlertDialog>
                     </div>
                   </CardContent>
                 </Card>
@@ -247,4 +277,4 @@ const Favorites = () => {
   );
 };
 
-export default Favorites;
+export default MyGarage;
