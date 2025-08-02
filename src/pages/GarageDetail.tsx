@@ -25,6 +25,8 @@ import { useAuth } from "@/contexts/AuthContext";
 import { useFavorites } from "@/hooks/useFavorites";
 import { supabase } from "@/integrations/supabase/client";
 import carProfile from "@/assets/car-profile.jpg";
+import MetaTags from "@/components/ui/meta";
+import Comments from "@/components/Comments";
 
 const GarageDetail = () => {
   const { id } = useParams();
@@ -37,8 +39,6 @@ const GarageDetail = () => {
   const [profile, setProfile] = useState<any>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isFavorited, setIsFavorited] = useState(false);
-  const [newComment, setNewComment] = useState("");
-  const [comments, setComments] = useState<any[]>([]);
 
   useEffect(() => {
     if (!id) return;
@@ -84,24 +84,6 @@ const GarageDetail = () => {
           setIsFavorited(favorited);
         }
 
-        // Fetch comments (placeholder for now)
-        setComments([
-          {
-            id: 1,
-            user: "drift_king",
-            avatar: "/placeholder.svg",
-            text: "Çok güzel bir build! Turbo kit hangi marka?",
-            time: "2 saat önce"
-          },
-          {
-            id: 2,
-            user: "jdm_lover", 
-            avatar: "/placeholder.svg",
-            text: "E92 M3'ler efsane, tebrikler 👏",
-            time: "5 saat önce"
-          }
-        ]);
-
       } catch (error) {
         console.error('Unexpected error:', error);
         toast({
@@ -130,26 +112,6 @@ const GarageDetail = () => {
     }
   };
 
-  const handleCommentSubmit = async () => {
-    if (!newComment.trim() || !user || !garage) return;
-
-    // For now, just add to local state (would need comments table implementation)
-    const newCommentObj = {
-      id: Date.now(),
-      user: profile?.username || "Anonymous",
-      avatar: profile?.avatar_url || "/placeholder.svg",
-      text: newComment,
-      time: "Az önce"
-    };
-
-    setComments(prev => [newCommentObj, ...prev]);
-    setNewComment("");
-    
-    toast({
-      title: "Başarılı!",
-      description: "Yorumunuz eklendi."
-    });
-  };
 
   if (isLoading) {
     return (
@@ -187,6 +149,12 @@ const GarageDetail = () => {
 
   return (
     <div className="min-h-screen bg-background">
+      <MetaTags 
+        title={`${garage?.name || "Garaj"} - sonvites.net`}
+        description={`${garage?.description || "Araç detayları ve modifikasyonları"} - ${garage?.car_brand} ${garage?.car_model}`}
+        url={`https://sonvites.net/garage/${id}`}
+        image={garage?.image_url}
+      />
       <Header />
       <main className="pt-16">
         {/* Hero Section */}
@@ -340,52 +308,7 @@ const GarageDetail = () => {
               </TabsContent>
 
               <TabsContent value="comments" className="space-y-6">
-                {/* Add Comment */}
-                <Card className="garage-card">
-                  <CardContent className="pt-6">
-                    <div className="space-y-4">
-                      <Textarea 
-                        placeholder="Yorumunuzu yazın..."
-                        value={newComment}
-                        onChange={(e) => setNewComment(e.target.value)}
-                        className="min-h-[100px]"
-                      />
-                      <div className="flex justify-end">
-                        <Button 
-                          onClick={handleCommentSubmit}
-                          disabled={!newComment.trim() || !user}
-                          className="btn-primary"
-                        >
-                          <MessageCircle className="w-4 h-4 mr-2" />
-                          Yorum Yap
-                        </Button>
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
-
-                {/* Comments List */}
-                <div className="space-y-4">
-                  {comments.map((comment) => (
-                    <Card key={comment.id} className="garage-card">
-                      <CardContent className="pt-6">
-                        <div className="flex space-x-4">
-                          <Avatar className="w-10 h-10">
-                            <AvatarImage src={comment.avatar} />
-                            <AvatarFallback><User className="w-5 h-5" /></AvatarFallback>
-                          </Avatar>
-                          <div className="flex-1">
-                            <div className="flex items-center space-x-2 mb-1">
-                              <span className="font-medium">@{comment.user}</span>
-                              <span className="text-sm text-muted-foreground">{comment.time}</span>
-                            </div>
-                            <p className="text-muted-foreground">{comment.text}</p>
-                          </div>
-                        </div>
-                      </CardContent>
-                    </Card>
-                  ))}
-                </div>
+                <Comments garageId={garage?.id} />
               </TabsContent>
             </Tabs>
           </div>
