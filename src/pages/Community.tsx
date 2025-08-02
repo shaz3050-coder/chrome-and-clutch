@@ -97,11 +97,13 @@ const Community = () => {
               Otomobil tutkunlarıyla buluşun, deneyimlerinizi paylaşın, etkinliklere katılın
             </p>
             <div className="flex items-center justify-center space-x-4">
-              <Button className="btn-primary" size="lg">
-                <Plus className="w-5 h-5 mr-2" />
-                Topluluğa Katıl
+              <Button className="btn-primary" size="lg" asChild>
+                <a href="/register">
+                  <Plus className="w-5 h-5 mr-2" />
+                  Topluluğa Katıl
+                </a>
               </Button>
-              <Button variant="outline" size="lg">
+              <Button variant="outline" size="lg" onClick={() => window.location.href = '#events'}>
                 <Calendar className="w-5 h-5 mr-2" />
                 Etkinliklere Bak
               </Button>
@@ -146,7 +148,7 @@ const Community = () => {
             {/* Main Content */}
             <div className="lg:col-span-2 space-y-8">
               {/* Upcoming Events */}
-              <section>
+              <section id="events">
                 <div className="flex items-center justify-between mb-6">
                   <h2 className="heading-medium">Yaklaşan Etkinlikler</h2>
                   <Button variant="outline" size="sm">Tümünü Gör</Button>
@@ -268,9 +270,11 @@ const Community = () => {
                   </CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-3">
-                  <Button className="w-full btn-primary">
-                    <Users className="w-4 h-4 mr-2" />
-                    Topluluğa Katıl
+                  <Button className="w-full btn-primary" asChild>
+                    <a href="/register">
+                      <Users className="w-4 h-4 mr-2" />
+                      Topluluğa Katıl
+                    </a>
                   </Button>
                   <Button variant="outline" className="w-full" asChild>
                     <a href="/forum">

@@ -15,6 +15,7 @@ import {
   LogOut
 } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
+import LanguageSwitcher from "./LanguageSwitcher";
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -32,7 +33,8 @@ const Header = () => {
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
     if (searchQuery.trim()) {
-      navigate(`/garages?search=${encodeURIComponent(searchQuery.trim())}`);
+      // Navigate to a dedicated search page or show results on current page
+      navigate(`/search?q=${encodeURIComponent(searchQuery.trim())}`);
       setSearchQuery("");
       setIsMenuOpen(false);
     }
@@ -74,6 +76,7 @@ const Header = () => {
 
           {/* Search & Auth */}
           <div className="hidden md:flex items-center space-x-4">
+            <LanguageSwitcher />
             <form onSubmit={handleSearch} className="relative">
               <Search className="w-4 h-4 absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground" />
               <input 

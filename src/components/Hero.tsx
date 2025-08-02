@@ -66,7 +66,7 @@ const Hero = () => {
               </Button>
               <Button size="lg" variant="ghost" className="btn-ghost group">
                 <Play className="w-4 h-4 mr-2" />
-                Nasıl Çalışır?
+                Nasıl Çalışır? <span className="text-xs ml-2 text-muted-foreground">(Çok Yakında)</span>
               </Button>
             </div>
 

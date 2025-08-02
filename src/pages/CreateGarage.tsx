@@ -263,6 +263,35 @@ const CreateGarage = () => {
                     </div>
                   </div>
 
+                  {/* Sale Information */}
+                  <div className="space-y-4 p-4 border rounded-lg bg-muted/30">
+                    <div className="flex items-center space-x-3">
+                      <input
+                        type="checkbox"
+                        id="isForSale"
+                        checked={formData.isForSale}
+                        onChange={(e) => setFormData(prev => ({ ...prev, isForSale: e.target.checked }))}
+                        className="rounded border-border"
+                      />
+                      <Label htmlFor="isForSale" className="font-medium">
+                        Bu araç satılık
+                      </Label>
+                    </div>
+                    
+                    {formData.isForSale && (
+                      <div className="space-y-2">
+                        <Label htmlFor="salePrice">Satış Fiyatı</Label>
+                        <Input
+                          id="salePrice"
+                          type="text"
+                          placeholder="₺500,000"
+                          value={formData.salePrice}
+                          onChange={(e) => handleInputChange("salePrice", e.target.value)}
+                        />
+                      </div>
+                    )}
+                  </div>
+
                   {/* Fotoğraf URL */}
                   <div className="space-y-2">
                     <Label htmlFor="imageUrl">Fotoğraf URL'si</Label>

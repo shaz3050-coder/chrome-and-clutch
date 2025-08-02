@@ -5,8 +5,15 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Calendar, User, Clock, Search, TrendingUp } from "lucide-react";
+import { useState, useEffect } from "react";
+import blogTech from "@/assets/blog-tech.jpg";
+import blogJdm from "@/assets/blog-jdm.jpg";
+import blogDrift from "@/assets/blog-drift.jpg";
 
 const Blog = () => {
+  const [selectedCategory, setSelectedCategory] = useState("Tümü");
+  const [filteredPosts, setFilteredPosts] = useState([]);
+
   const posts = [
     {
       id: 1,
@@ -16,8 +23,9 @@ const Blog = () => {
       date: "2024-01-15",
       readTime: "8 dakika",
       category: "Modifikasyon",
-      image: "/placeholder.svg",
-      featured: true
+      image: blogTech,
+      featured: true,
+      tags: ["turbo", "modification", "engine"]
     },
     {
       id: 2,
@@ -27,8 +35,9 @@ const Blog = () => {
       date: "2024-01-12",
       readTime: "6 dakika",
       category: "Kültür",
-      image: "/placeholder.svg",
-      featured: false
+      image: blogJdm,
+      featured: false,
+      tags: ["jdm", "culture", "japanese"]
     },
     {
       id: 3,
@@ -38,13 +47,28 @@ const Blog = () => {
       date: "2024-01-10",
       readTime: "10 dakika",
       category: "Drift",
-      image: "/placeholder.svg",
-      featured: false
+      image: blogDrift,
+      featured: false,
+      tags: ["drift", "racing", "cars"]
     }
   ];
 
   const categories = ["Tümü", "Modifikasyon", "Kültür", "Drift", "Teknoloji", "Yarış"];
   const popularTags = ["turbo", "jdm", "drift", "stance", "modification", "engine"];
+
+  useEffect(() => {
+    if (selectedCategory === "Tümü") {
+      setFilteredPosts(posts);
+    } else {
+      setFilteredPosts(posts.filter(post => post.category === selectedCategory));
+    }
+  }, [selectedCategory]);
+
+  const handleTagClick = (tag) => {
+    const filtered = posts.filter(post => post.tags.includes(tag));
+    setFilteredPosts(filtered);
+    setSelectedCategory("Tümü");
+  };
 
   return (
     <div className="min-h-screen bg-background">
@@ -79,8 +103,9 @@ const Blog = () => {
                 {categories.map((category) => (
                   <Button
                     key={category}
-                    variant={category === "Tümü" ? "default" : "outline"}
+                    variant={category === selectedCategory ? "default" : "outline"}
                     size="sm"
+                    onClick={() => setSelectedCategory(category)}
                   >
                     {category}
                   </Button>
@@ -89,7 +114,7 @@ const Blog = () => {
 
               {/* Blog Posts */}
               <div className="space-y-6">
-                {posts.map((post) => (
+                {filteredPosts.map((post) => (
                   <Card key={post.id} className={`overflow-hidden hover-glow ${post.featured ? 'border-primary' : ''}`}>
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                       <div className="relative h-48 md:h-full bg-gradient-to-br from-primary/20 to-primary/5">
@@ -161,7 +186,12 @@ const Blog = () => {
                 <CardContent>
                   <div className="flex flex-wrap gap-2">
                     {popularTags.map((tag) => (
-                      <Badge key={tag} variant="outline" className="cursor-pointer hover:bg-primary hover:text-primary-foreground">
+                      <Badge 
+                        key={tag} 
+                        variant="outline" 
+                        className="cursor-pointer hover:bg-primary hover:text-primary-foreground"
+                        onClick={() => handleTagClick(tag)}
+                      >
                         #{tag}
                       </Badge>
                     ))}
