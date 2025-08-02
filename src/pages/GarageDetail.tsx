@@ -1,3 +1,5 @@
+import { useState, useEffect } from "react";
+import { useParams, useNavigate } from "react-router-dom";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -15,49 +17,173 @@ import {
   Settings, 
   Camera,
   Star,
-  User
+  User,
+  ArrowLeft
 } from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
+import { useAuth } from "@/contexts/AuthContext";
+import { useFavorites } from "@/hooks/useFavorites";
+import { supabase } from "@/integrations/supabase/client";
 import carProfile from "@/assets/car-profile.jpg";
 
 const GarageDetail = () => {
-  const garage = {
-    id: 1,
-    username: "speedster_23",
-    userAvatar: "/placeholder.svg",
-    car: "BMW M3 E92",
-    year: "2008",
-    images: [carProfile, carProfile, carProfile, carProfile],
-    modifications: [
-      { category: "Motor", items: ["Turbo Kit", "Cold Air Intake", "ECU Remap"] },
-      { category: "Suspansiyon", items: ["Coilover Kit", "Sway Bars", "Strut Bars"] },
-      { category: "Egzoz", items: ["Cat-back Exhaust", "Headers", "Downpipe"] },
-      { category: "Frenler", items: ["Brembo Kit", "Steel Lines", "Performance Pads"] }
-    ],
-    performance: {
-      power: "420 HP",
-      torque: "500 Nm", 
-      acceleration: "4.2s 0-100",
-      topSpeed: "280 km/h"
-    },
-    story: "Bu M3'ü 3 yıl önce aldım ve o günden beri hayallerime ulaşmak için adım adım modifiye ediyorum. İlk başta sadece görsel değişiklikler yapmak istiyordum ama sonra performans tarafına da yöneldim. Şu an çok memnunum ama henüz bitmiş değil!",
-    likes: 142,
-    comments: [
-      {
-        id: 1,
-        user: "drift_king",
-        avatar: "/placeholder.svg",
-        text: "Çok güzel bir build! Turbo kit hangi marka?",
-        time: "2 saat önce"
-      },
-      {
-        id: 2,
-        user: "jdm_lover", 
-        avatar: "/placeholder.svg",
-        text: "E92 M3'ler efsane, tebrikler 👏",
-        time: "5 saat önce"
+  const { id } = useParams();
+  const navigate = useNavigate();
+  const { toast } = useToast();
+  const { user } = useAuth();
+  const { toggleFavorite, checkIsFavorited, isLoading: favoriteLoading } = useFavorites();
+  
+  const [garage, setGarage] = useState<any>(null);
+  const [profile, setProfile] = useState<any>(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [isFavorited, setIsFavorited] = useState(false);
+  const [newComment, setNewComment] = useState("");
+  const [comments, setComments] = useState<any[]>([]);
+
+  useEffect(() => {
+    if (!id) return;
+
+    const fetchGarageData = async () => {
+      try {
+        // Fetch garage data
+        const { data: garageData, error: garageError } = await supabase
+          .from('garages')
+          .select('*')
+          .eq('id', id)
+          .single();
+
+        if (garageError) {
+          console.error('Error fetching garage:', garageError);
+          toast({
+            title: "Hata",
+            description: "Garaj bilgileri yüklenirken bir hata oluştu.",
+            variant: "destructive"
+          });
+          return;
+        }
+
+        if (!garageData) {
+          navigate('/garages');
+          return;
+        }
+
+        setGarage(garageData);
+
+        // Fetch owner profile
+        const { data: profileData } = await supabase
+          .from('profiles')
+          .select('*')
+          .eq('user_id', garageData.user_id)
+          .single();
+
+        setProfile(profileData);
+
+        // Check if favorited
+        if (user) {
+          const favorited = await checkIsFavorited(garageData.id);
+          setIsFavorited(favorited);
+        }
+
+        // Fetch comments (placeholder for now)
+        setComments([
+          {
+            id: 1,
+            user: "drift_king",
+            avatar: "/placeholder.svg",
+            text: "Çok güzel bir build! Turbo kit hangi marka?",
+            time: "2 saat önce"
+          },
+          {
+            id: 2,
+            user: "jdm_lover", 
+            avatar: "/placeholder.svg",
+            text: "E92 M3'ler efsane, tebrikler 👏",
+            time: "5 saat önce"
+          }
+        ]);
+
+      } catch (error) {
+        console.error('Unexpected error:', error);
+        toast({
+          title: "Hata",
+          description: "Beklenmeyen bir hata oluştu.",
+          variant: "destructive"
+        });
+      } finally {
+        setIsLoading(false);
       }
-    ]
+    };
+
+    fetchGarageData();
+  }, [id, user, navigate, toast, checkIsFavorited]);
+
+  const handleFavoriteToggle = async () => {
+    if (!garage) return;
+    
+    const result = await toggleFavorite(garage.id);
+    if (result !== false) {
+      setIsFavorited(result);
+      setGarage(prev => ({
+        ...prev,
+        likes_count: result ? prev.likes_count + 1 : Math.max(0, prev.likes_count - 1)
+      }));
+    }
   };
+
+  const handleCommentSubmit = async () => {
+    if (!newComment.trim() || !user || !garage) return;
+
+    // For now, just add to local state (would need comments table implementation)
+    const newCommentObj = {
+      id: Date.now(),
+      user: profile?.username || "Anonymous",
+      avatar: profile?.avatar_url || "/placeholder.svg",
+      text: newComment,
+      time: "Az önce"
+    };
+
+    setComments(prev => [newCommentObj, ...prev]);
+    setNewComment("");
+    
+    toast({
+      title: "Başarılı!",
+      description: "Yorumunuz eklendi."
+    });
+  };
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-background">
+        <Header />
+        <main className="pt-16 flex items-center justify-center min-h-[50vh]">
+          <div className="text-center">
+            <div className="animate-spin rounded-full h-12 w-12 border-2 border-primary border-t-transparent mx-auto mb-4"></div>
+            <p className="text-muted-foreground">Garaj yükleniyor...</p>
+          </div>
+        </main>
+        <Footer />
+      </div>
+    );
+  }
+
+  if (!garage) {
+    return (
+      <div className="min-h-screen bg-background">
+        <Header />
+        <main className="pt-16 flex items-center justify-center min-h-[50vh]">
+          <div className="text-center">
+            <h2 className="heading-large mb-4">Garaj Bulunamadı</h2>
+            <p className="text-muted-foreground mb-8">Aradığınız garaj mevcut değil.</p>
+            <Button onClick={() => navigate('/garages')}>
+              <ArrowLeft className="w-4 h-4 mr-2" />
+              Garajlara Dön
+            </Button>
+          </div>
+        </main>
+        <Footer />
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-background">
@@ -66,8 +192,8 @@ const GarageDetail = () => {
         {/* Hero Section */}
         <section className="relative h-96 overflow-hidden">
           <img 
-            src={garage.images[0]}
-            alt={garage.car}
+            src={garage.image_url || carProfile}
+            alt={garage.name}
             className="w-full h-full object-cover"
           />
           <div className="absolute inset-0 bg-gradient-to-t from-background via-background/20 to-transparent"></div>
@@ -75,27 +201,34 @@ const GarageDetail = () => {
           <div className="absolute bottom-6 left-6 right-6">
             <div className="flex items-end justify-between">
               <div>
-                <h1 className="heading-large mb-2">{garage.car}</h1>
+                <h1 className="heading-large mb-2">{garage.name}</h1>
                 <div className="flex items-center space-x-4 text-muted-foreground">
                   <div className="flex items-center space-x-2">
                     <Avatar className="w-8 h-8">
-                      <AvatarImage src={garage.userAvatar} />
+                      <AvatarImage src={profile?.avatar_url} />
                       <AvatarFallback><User className="w-4 h-4" /></AvatarFallback>
                     </Avatar>
-                    <span>@{garage.username}</span>
+                    <span>@{profile?.username || "Anonim"}</span>
                   </div>
-                  <Badge variant="secondary">{garage.year}</Badge>
+                  <Badge variant="secondary">{garage.car_brand} {garage.car_model}</Badge>
+                  {garage.car_year && <Badge variant="outline">{garage.car_year}</Badge>}
                 </div>
               </div>
               
               <div className="flex space-x-2">
-                <Button size="sm" className="btn-ghost">
+                <Button size="sm" variant="outline">
                   <Share2 className="w-4 h-4 mr-2" />
                   Paylaş
                 </Button>
-                <Button size="sm" className="btn-primary">
-                  <Heart className="w-4 h-4 mr-2" />
-                  {garage.likes}
+                <Button 
+                  size="sm" 
+                  variant={isFavorited ? "default" : "outline"}
+                  onClick={handleFavoriteToggle}
+                  disabled={favoriteLoading}
+                  className={isFavorited ? "btn-primary" : ""}
+                >
+                  <Heart className={`w-4 h-4 mr-2 ${isFavorited ? 'fill-current' : ''}`} />
+                  {garage.likes_count || 0}
                 </Button>
               </div>
             </div>
@@ -126,20 +259,20 @@ const GarageDetail = () => {
                     <CardContent className="space-y-4">
                       <div className="grid grid-cols-2 gap-4">
                         <div className="text-center">
-                          <div className="text-2xl font-bold text-primary">{garage.performance.power}</div>
+                          <div className="text-2xl font-bold text-primary">{garage.horsepower ? `${garage.horsepower} HP` : "N/A"}</div>
                           <div className="text-sm text-muted-foreground">Güç</div>
                         </div>
                         <div className="text-center">
-                          <div className="text-2xl font-bold text-primary">{garage.performance.torque}</div>
+                          <div className="text-2xl font-bold text-primary">{garage.torque ? `${garage.torque} Nm` : "N/A"}</div>
                           <div className="text-sm text-muted-foreground">Tork</div>
                         </div>
                         <div className="text-center">
-                          <div className="text-lg font-semibold">{garage.performance.acceleration}</div>
-                          <div className="text-sm text-muted-foreground">0-100 km/h</div>
+                          <div className="text-lg font-semibold">{garage.modification_type || "Belirtilmemiş"}</div>
+                          <div className="text-sm text-muted-foreground">Modifikasyon</div>
                         </div>
                         <div className="text-center">
-                          <div className="text-lg font-semibold">{garage.performance.topSpeed}</div>
-                          <div className="text-sm text-muted-foreground">Maksimum Hız</div>
+                          <div className="text-lg font-semibold">{garage.price_range || "N/A"}</div>
+                          <div className="text-sm text-muted-foreground">Fiyat Aralığı</div>
                         </div>
                       </div>
                     </CardContent>
@@ -151,52 +284,56 @@ const GarageDetail = () => {
                       <CardTitle>Sahibinin Hikayesi</CardTitle>
                     </CardHeader>
                     <CardContent>
-                      <p className="text-muted-foreground leading-relaxed">{garage.story}</p>
+                      <p className="text-muted-foreground leading-relaxed">{garage.description || "Henüz açıklama eklenmemiş."}</p>
                     </CardContent>
                   </Card>
                 </div>
               </TabsContent>
 
               <TabsContent value="modifications" className="space-y-6">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  {garage.modifications.map((mod, index) => (
-                    <Card key={index} className="garage-card">
-                      <CardHeader>
-                        <CardTitle className="flex items-center">
-                          <Settings className="w-5 h-5 mr-2 text-primary" />
-                          {mod.category}
-                        </CardTitle>
-                      </CardHeader>
-                      <CardContent>
-                        <div className="space-y-2">
-                          {mod.items.map((item, itemIndex) => (
-                            <div key={itemIndex} className="flex items-center space-x-2">
-                              <Zap className="w-3 h-3 text-primary" />
-                              <span className="text-sm">{item}</span>
-                            </div>
-                          ))}
+                <Card className="garage-card">
+                  <CardHeader>
+                    <CardTitle className="flex items-center">
+                      <Settings className="w-5 h-5 mr-2 text-primary" />
+                      Modifikasyonlar
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="space-y-4">
+                      {garage.modification_type && (
+                        <div className="flex items-center space-x-2">
+                          <Zap className="w-4 h-4 text-primary" />
+                          <span>{garage.modification_type}</span>
                         </div>
-                      </CardContent>
-                    </Card>
-                  ))}
-                </div>
+                      )}
+                      {garage.location && (
+                        <div className="flex items-center space-x-2">
+                          <span className="text-sm text-muted-foreground">Konum:</span>
+                          <span>{garage.location}</span>
+                        </div>
+                      )}
+                      <p className="text-muted-foreground text-sm">
+                        Detaylı modifikasyon listesi yakında eklenecek.
+                      </p>
+                    </div>
+                  </CardContent>
+                </Card>
               </TabsContent>
 
               <TabsContent value="gallery" className="space-y-6">
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                  {garage.images.map((image, index) => (
-                    <div key={index} className="aspect-square overflow-hidden rounded-lg car-card">
-                      <img 
-                        src={image}
-                        alt={`${garage.car} ${index + 1}`}
-                        className="w-full h-full object-cover"
-                      />
-                    </div>
-                  ))}
+                  <div className="aspect-square overflow-hidden rounded-lg car-card">
+                    <img 
+                      src={garage.image_url || carProfile}
+                      alt={garage.name}
+                      className="w-full h-full object-cover"
+                    />
+                  </div>
                   <div className="aspect-square border-2 border-dashed border-border rounded-lg flex items-center justify-center car-card hover:border-primary">
                     <div className="text-center">
                       <Camera className="w-8 h-8 mx-auto mb-2 text-muted-foreground" />
-                      <p className="text-sm text-muted-foreground">Fotoğraf Ekle</p>
+                      <p className="text-sm text-muted-foreground">Daha Fazla Fotoğraf</p>
+                      <p className="text-xs text-muted-foreground mt-1">Yakında...</p>
                     </div>
                   </div>
                 </div>
@@ -209,10 +346,16 @@ const GarageDetail = () => {
                     <div className="space-y-4">
                       <Textarea 
                         placeholder="Yorumunuzu yazın..."
+                        value={newComment}
+                        onChange={(e) => setNewComment(e.target.value)}
                         className="min-h-[100px]"
                       />
                       <div className="flex justify-end">
-                        <Button className="btn-primary">
+                        <Button 
+                          onClick={handleCommentSubmit}
+                          disabled={!newComment.trim() || !user}
+                          className="btn-primary"
+                        >
                           <MessageCircle className="w-4 h-4 mr-2" />
                           Yorum Yap
                         </Button>
@@ -223,7 +366,7 @@ const GarageDetail = () => {
 
                 {/* Comments List */}
                 <div className="space-y-4">
-                  {garage.comments.map((comment) => (
+                  {comments.map((comment) => (
                     <Card key={comment.id} className="garage-card">
                       <CardContent className="pt-6">
                         <div className="flex space-x-4">
