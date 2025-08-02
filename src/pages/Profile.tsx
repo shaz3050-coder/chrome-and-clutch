@@ -57,7 +57,7 @@ const Profile = () => {
             location: data.location || "", 
             website: data.website || "",
             avatar_url: data.avatar_url || "",
-            phone_number: data.phone_number || ""
+            phone_number: (data as any).phone_number || ""
           });
         }
       } catch (error) {
