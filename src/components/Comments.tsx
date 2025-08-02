@@ -111,12 +111,12 @@ export const Comments = ({ garageId, postId }: CommentsProps) => {
         </CardContent>
       </Card>
 
-      <Card className="garage-card">
-        <CardContent className="pt-6 text-center">
-          <MessageCircle className="w-12 h-12 mx-auto mb-4 text-muted-foreground" />
-          <p className="text-muted-foreground">Yorumlar yakında aktif olacak!</p>
-        </CardContent>
-      </Card>
+      {/* Comments will be displayed here when available */}
+      <div className="text-center py-8">
+        <p className="text-muted-foreground text-sm">
+          Henüz yorum yapılmamış. İlk yorumu sen yap!
+        </p>
+      </div>
     </div>
   );
 };

@@ -32,11 +32,11 @@ const Footer = () => {
           <div>
             <h3 className="font-semibold text-foreground mb-4">Platform</h3>
             <ul className="space-y-2 text-sm text-muted-foreground">
-              <li><a href="#" className="hover:text-primary transition-colors">Ana Sayfa</a></li>
-              <li><a href="#" className="hover:text-primary transition-colors">Garajları Keşfet</a></li>
-              <li><a href="#" className="hover:text-primary transition-colors">Popüler Araçlar</a></li>
-              <li><a href="#" className="hover:text-primary transition-colors">Blog</a></li>
-              <li><a href="#" className="hover:text-primary transition-colors">Topluluk</a></li>
+              <li><a href="/" className="hover:text-primary transition-colors">Ana Sayfa</a></li>
+              <li><a href="/garages" className="hover:text-primary transition-colors">Garajları Keşfet</a></li>
+              <li><a href="/garages" className="hover:text-primary transition-colors">Popüler Araçlar</a></li>
+              <li><a href="/blog" className="hover:text-primary transition-colors">Blog</a></li>
+              <li><a href="/community" className="hover:text-primary transition-colors">Topluluk</a></li>
             </ul>
           </div>
 
@@ -44,11 +44,11 @@ const Footer = () => {
           <div>
             <h3 className="font-semibold text-foreground mb-4">Hesap</h3>
             <ul className="space-y-2 text-sm text-muted-foreground">
-              <li><a href="#" className="hover:text-primary transition-colors">Giriş Yap</a></li>
-              <li><a href="#" className="hover:text-primary transition-colors">Kayıt Ol</a></li>
-              <li><a href="#" className="hover:text-primary transition-colors">Garaj Oluştur</a></li>
-              <li><a href="#" className="hover:text-primary transition-colors">Profil Ayarları</a></li>
-              <li><a href="#" className="hover:text-primary transition-colors">Yardım</a></li>
+              <li><a href="/login" className="hover:text-primary transition-colors">Giriş Yap</a></li>
+              <li><a href="/register" className="hover:text-primary transition-colors">Kayıt Ol</a></li>
+              <li><a href="/create-garage" className="hover:text-primary transition-colors">Garaj Oluştur</a></li>
+              <li><a href="/profile" className="hover:text-primary transition-colors">Profil Ayarları</a></li>
+              <li><a href="/community" className="hover:text-primary transition-colors">Yardım</a></li>
             </ul>
           </div>
 

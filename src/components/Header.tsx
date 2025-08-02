@@ -182,6 +182,24 @@ const Header = () => {
                       </Avatar>
                       <span className="text-sm">Hoş geldin!</span>
                     </div>
+                    <Button variant="ghost" className="btn-ghost justify-start" asChild>
+                      <Link to="/favorites">
+                        <Heart className="w-4 h-4 mr-2" />
+                        Favoriler
+                      </Link>
+                    </Button>
+                    <Button variant="ghost" className="btn-ghost justify-start" asChild>
+                      <Link to="/my-garage">
+                        <Car className="w-4 h-4 mr-2" />
+                        Garajım
+                      </Link>
+                    </Button>
+                    <Button variant="ghost" className="btn-ghost justify-start" asChild>
+                      <Link to="/profile">
+                        <Settings className="w-4 h-4 mr-2" />
+                        Profil
+                      </Link>
+                    </Button>
                     <Button variant="ghost" className="btn-ghost justify-start" onClick={handleSignOut}>
                       <LogOut className="w-4 h-4 mr-2" />
                       Çıkış Yap
