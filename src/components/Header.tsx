@@ -76,12 +76,14 @@ const Header = () => {
               <div className="w-8 h-8 rounded-full bg-muted animate-pulse"></div>
             ) : user ? (
               <div className="flex items-center space-x-3">
-                <Avatar className="w-8 h-8">
-                  <AvatarFallback>
-                    <User className="w-4 h-4" />
-                  </AvatarFallback>
-                </Avatar>
-                <span className="text-sm font-medium">Hoş geldin!</span>
+                <Link to="/profile" className="flex items-center space-x-2 hover:opacity-80 transition-opacity">
+                  <Avatar className="w-8 h-8">
+                    <AvatarFallback>
+                      <User className="w-4 h-4" />
+                    </AvatarFallback>
+                  </Avatar>
+                  <span className="text-sm font-medium">Profil</span>
+                </Link>
                 <Button variant="ghost" size="sm" onClick={handleSignOut}>
                   <LogOut className="w-4 h-4 mr-2" />
                   Çıkış

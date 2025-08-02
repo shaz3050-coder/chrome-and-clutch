@@ -1,5 +1,6 @@
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import { Link } from "react-router-dom";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -50,9 +51,11 @@ const Garages = () => {
             <p className="text-muted-foreground text-lg mb-8 max-w-2xl mx-auto">
               Topluluk üyelerinin araçlarını keşfedin, modifikasyon hikayelerini okuyun
             </p>
-            <Button className="btn-primary" size="lg">
-              <Plus className="w-5 h-5 mr-2" />
-              Garajını Oluştur
+            <Button className="btn-primary" size="lg" asChild>
+              <Link to="/create-garage">
+                <Plus className="w-5 h-5 mr-2" />
+                Garajını Oluştur
+              </Link>
             </Button>
           </div>
         </section>
@@ -112,8 +115,10 @@ const Garages = () => {
                             <span>{garage.comments}</span>
                           </span>
                         </div>
-                        <Button variant="ghost" size="sm">
-                          İncele
+                        <Button variant="ghost" size="sm" asChild>
+                          <Link to={`/garage/${garage.id}`}>
+                            İncele
+                          </Link>
                         </Button>
                       </div>
                     </div>

@@ -1,14 +1,19 @@
+import { useState, useEffect } from "react";
 import { Heart, Eye, MessageCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
+import { useFavorites } from "@/hooks/useFavorites";
 import bmwM3 from "@/assets/bmw-m3.jpg";
 import audiRS6 from "@/assets/audi-rs6.jpg";
 import mercedesC63 from "@/assets/mercedes-c63.jpg";
 
 const FeaturedCars = () => {
+  const { toggleFavorite, checkIsFavorited, isLoading } = useFavorites();
+  const [favorites, setFavorites] = useState<Record<string, boolean>>({});
+
   const featuredCars = [
     {
-      id: 1,
+      id: "1",
       title: "BMW M3 Competition",
       owner: "speedhunter92",
       image: bmwM3,
@@ -19,7 +24,7 @@ const FeaturedCars = () => {
       tags: ["BMW", "M3", "Turbo", "Modified"]
     },
     {
-      id: 2,
+      id: "2", 
       title: "Audi RS6 Avant",
       owner: "wagonlover",
       image: audiRS6,
@@ -30,7 +35,7 @@ const FeaturedCars = () => {
       tags: ["Audi", "RS6", "Wagon", "Daily"]
     },
     {
-      id: 3,
+      id: "3",
       title: "Mercedes C63 AMG",
       owner: "amgpower",
       image: mercedesC63,
@@ -41,6 +46,40 @@ const FeaturedCars = () => {
       tags: ["Mercedes", "AMG", "V8", "Exhaust"]
     }
   ];
+
+  useEffect(() => {
+    // Check favorites status for each car
+    const checkFavorites = async () => {
+      const favoriteStatuses: Record<string, boolean> = {};
+      
+      for (const car of featuredCars) {
+        try {
+          const isFavorited = await checkIsFavorited(car.id);
+          favoriteStatuses[car.id] = isFavorited;
+        } catch (error) {
+          console.error(`Error checking favorite for car ${car.id}:`, error);
+          favoriteStatuses[car.id] = false;
+        }
+      }
+      
+      setFavorites(favoriteStatuses);
+    };
+
+    checkFavorites();
+  }, []);
+
+  const handleFavoriteClick = async (carId: string, e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    
+    const newStatus = await toggleFavorite(carId);
+    if (newStatus !== false) {
+      setFavorites(prev => ({
+        ...prev,
+        [carId]: newStatus
+      }));
+    }
+  };
 
   return (
     <section className="py-20 bg-gradient-to-b from-background to-muted/20">
@@ -74,8 +113,16 @@ const FeaturedCars = () => {
                 <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                 
                 {/* Heart Button */}
-                <button className="absolute top-4 right-4 w-10 h-10 bg-black/50 backdrop-blur-sm rounded-full flex items-center justify-center hover:bg-primary hover:text-primary-foreground transition-all duration-300">
-                  <Heart className="w-5 h-5" />
+                <button 
+                  className={`absolute top-4 right-4 w-10 h-10 backdrop-blur-sm rounded-full flex items-center justify-center transition-all duration-300 ${
+                    favorites[car.id] 
+                      ? 'bg-red-500/80 text-white' 
+                      : 'bg-black/50 hover:bg-primary hover:text-primary-foreground'
+                  }`}
+                  onClick={(e) => handleFavoriteClick(car.id, e)}
+                  disabled={isLoading}
+                >
+                  <Heart className={`w-5 h-5 ${favorites[car.id] ? 'fill-current' : ''}`} />
                 </button>
 
                 {/* Stats Overlay */}
